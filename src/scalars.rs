@@ -38,44 +38,234 @@ use crate::registry;
 /// Variadic functions (arity = -1) are emitted with rusqlite's
 /// `arity = -1` convention.
 pub fn register_all(conn: &Connection) -> Result<()> {
-    register_scalar(conn, "st_3dclosestpoint", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3d_closest_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dclosestpoint
-    register_scalar(conn, "st_closest_point_3d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dclosestpoint
-    register_scalar(conn, "st_closest_point_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dclosestpoint
-    register_scalar(conn, "st_3dcontains", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3d_contains", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dcontains
-    register_scalar(conn, "st_contains_3d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dcontains
-    register_scalar(conn, "st_contains_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dcontains
-    register_scalar(conn, "st_3ddfullywithin", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3d_d_fully_within", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3ddfullywithin
-    register_scalar(conn, "st_3d_dfully_within", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3ddfullywithin
-    register_scalar(conn, "st_3ddwithin", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3d_d_within", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3ddwithin
-    register_scalar(conn, "st_3d_dwithin", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3ddwithin
-    register_scalar(conn, "st_dwithin_3d", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3ddwithin
-    register_scalar(conn, "st_dwithin_threed", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3ddwithin
-    register_scalar(conn, "st_3dintersects", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3d_intersects", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dintersects
-    register_scalar(conn, "st_intersects_3d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dintersects
-    register_scalar(conn, "st_intersects_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dintersects
-    register_scalar(conn, "st_3dlineinterpolatepoint", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3d_line_interpolate_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dlineinterpolatepoint
-    register_scalar(conn, "st_line_interpolate_point_3d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dlineinterpolatepoint
-    register_scalar(conn, "st_line_interpolate_point_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dlineinterpolatepoint
-    register_scalar(conn, "st_3dlongestline", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3d_longest_line", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dlongestline
-    register_scalar(conn, "st_longest_line_3d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dlongestline
-    register_scalar(conn, "st_longest_line_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dlongestline
-    register_scalar(conn, "st_3dmaxdistance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3d_max_distance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dmaxdistance
-    register_scalar(conn, "st_max_distance_3d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dmaxdistance
-    register_scalar(conn, "st_max_distance_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dmaxdistance
-    register_scalar(conn, "st_3dshortestline", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3d_shortest_line", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dshortestline
-    register_scalar(conn, "st_shortest_line_3d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dshortestline
-    register_scalar(conn, "st_shortest_line_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_3dshortestline
-    register_scalar(conn, "st_addband", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_add_band", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_addband
+    register_scalar(
+        conn,
+        "st_3dclosestpoint",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3d_closest_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dclosestpoint
+    register_scalar(
+        conn,
+        "st_closest_point_3d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dclosestpoint
+    register_scalar(
+        conn,
+        "st_closest_point_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dclosestpoint
+    register_scalar(
+        conn,
+        "st_3dcontains",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3d_contains",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dcontains
+    register_scalar(
+        conn,
+        "st_contains_3d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dcontains
+    register_scalar(
+        conn,
+        "st_contains_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dcontains
+    register_scalar(
+        conn,
+        "st_3ddfullywithin",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3d_d_fully_within",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3ddfullywithin
+    register_scalar(
+        conn,
+        "st_3d_dfully_within",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3ddfullywithin
+    register_scalar(
+        conn,
+        "st_3ddwithin",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3d_d_within",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3ddwithin
+    register_scalar(
+        conn,
+        "st_3d_dwithin",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3ddwithin
+    register_scalar(
+        conn,
+        "st_dwithin_3d",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3ddwithin
+    register_scalar(
+        conn,
+        "st_dwithin_threed",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3ddwithin
+    register_scalar(
+        conn,
+        "st_3dintersects",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3d_intersects",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dintersects
+    register_scalar(
+        conn,
+        "st_intersects_3d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dintersects
+    register_scalar(
+        conn,
+        "st_intersects_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dintersects
+    register_scalar(
+        conn,
+        "st_3dlineinterpolatepoint",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3d_line_interpolate_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dlineinterpolatepoint
+    register_scalar(
+        conn,
+        "st_line_interpolate_point_3d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dlineinterpolatepoint
+    register_scalar(
+        conn,
+        "st_line_interpolate_point_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dlineinterpolatepoint
+    register_scalar(
+        conn,
+        "st_3dlongestline",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3d_longest_line",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dlongestline
+    register_scalar(
+        conn,
+        "st_longest_line_3d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dlongestline
+    register_scalar(
+        conn,
+        "st_longest_line_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dlongestline
+    register_scalar(
+        conn,
+        "st_3dmaxdistance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3d_max_distance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dmaxdistance
+    register_scalar(
+        conn,
+        "st_max_distance_3d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dmaxdistance
+    register_scalar(
+        conn,
+        "st_max_distance_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dmaxdistance
+    register_scalar(
+        conn,
+        "st_3dshortestline",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3d_shortest_line",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dshortestline
+    register_scalar(
+        conn,
+        "st_shortest_line_3d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dshortestline
+    register_scalar(
+        conn,
+        "st_shortest_line_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_3dshortestline
+    register_scalar(
+        conn,
+        "st_addband",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_add_band",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_addband
     register_scalar(conn, "st_addface", -1, FunctionFlags::SQLITE_UTF8)?;
     register_scalar(conn, "st_add_face", -1, FunctionFlags::SQLITE_UTF8)?; // alias of st_addface
     register_scalar(conn, "topology_add_face", -1, FunctionFlags::SQLITE_UTF8)?; // alias of st_addface
@@ -91,884 +281,5199 @@ pub fn register_all(conn: &Connection) -> Result<()> {
     register_scalar(conn, "topology_add_iso_node", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_addisonode
     register_scalar(conn, "st_addisonode2", 3, FunctionFlags::SQLITE_UTF8)?;
     register_scalar(conn, "st_add_iso_node2", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_addisonode2
-    register_scalar(conn, "st_addmeasure", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_add_measure", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_addmeasure
-    register_scalar(conn, "st_addpoint", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_add_point", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_addpoint
-    register_scalar(conn, "st_affine", 7, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_angle", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_approximatemedialaxis", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_approximate_medial_axis", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_approximatemedialaxis
-    register_scalar(conn, "st_area", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_area_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_area
-    register_scalar(conn, "st_areathreed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3darea", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_areathreed
-    register_scalar(conn, "st_area_threed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_areathreed
-    register_scalar(conn, "st_arraycols", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_array_cols", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_arraycols
-    register_scalar(conn, "st_arrayrows", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_array_rows", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_arrayrows
-    register_scalar(conn, "st_arrayvalue", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_array_value", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_arrayvalue
-    register_scalar(conn, "st_asbinary", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_binary", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asbinary
-    register_scalar(conn, "st_asencodedpolyline", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_encoded_polyline", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asencodedpolyline
-    register_scalar(conn, "st_asewkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_ewkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asewkb
-    register_scalar(conn, "st_asewkt", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_ewkt", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asewkt
-    register_scalar(conn, "st_asflatgeobuf", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_flatgeobuf", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asflatgeobuf
-    register_scalar(conn, "st_asgeobuf", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_geobuf", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asgeobuf
-    register_scalar(conn, "st_asgeogtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_geog_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asgeogtext
-    register_scalar(conn, "st_asgeojson", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_geojson", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asgeojson
-    register_scalar(conn, "st_asgml", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_gml", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asgml
-    register_scalar(conn, "st_ashexewkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_hexewkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_ashexewkb
-    register_scalar(conn, "st_askml", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_kml", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_askml
-    register_scalar(conn, "st_aslatlontext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_lat_lon_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_aslatlontext
-    register_scalar(conn, "st_asmarc21", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_asmvt", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_mvt", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asmvt
-    register_scalar(conn, "st_asmvtgeom", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_mvt_geom", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asmvtgeom
-    register_scalar(conn, "st_aspect", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_aspng", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_png", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_aspng
-    register_scalar(conn, "st_assvg", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_svg", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_assvg
-    register_scalar(conn, "st_astext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_marc21", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_astext
-    register_scalar(conn, "st_as_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_astext
-    register_scalar(conn, "st_astiff", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_tiff", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_astiff
-    register_scalar(conn, "st_astopojson", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_topo_json", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_astopojson
-    register_scalar(conn, "topology_as_topojson", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_astopojson
-    register_scalar(conn, "st_astwkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_twkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_astwkb
-    register_scalar(conn, "st_asx3d", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_as_x3d", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_asx3d
-    register_scalar(conn, "st_azimuth", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bandnodatavalue", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_band_nodata_value", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_bandnodatavalue
-    register_scalar(conn, "st_bandpixeltype", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_band_pixel_type", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_bandpixeltype
-    register_scalar(conn, "st_bboxabove", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bbox_above", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_bboxabove
-    register_scalar(conn, "st_bboxbelow", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bbox_below", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_bboxbelow
-    register_scalar(conn, "st_bboxdistance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bboxintersects", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bboxintersectsnd", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bboxleftof", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bbox_left_of", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_bboxleftof
-    register_scalar(conn, "st_bboxoverright", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bbox_over_right", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_bboxoverright
-    register_scalar(conn, "st_bboxrightof", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bbox_right_of", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_bboxrightof
-    register_scalar(conn, "st_bdmpolyfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bd_mpoly_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_bdmpolyfromtext
-    register_scalar(conn, "st_bdpolyfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bd_poly_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_bdpolyfromtext
-    register_scalar(conn, "st_boundary", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_boundary_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_boundary
-    register_scalar(conn, "st_boundarythreed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3dboundary", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_boundarythreed
-    register_scalar(conn, "st_boundary_threed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_boundarythreed
-    register_scalar(conn, "st_boundingdiagonal", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_bounding_diagonal", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_boundingdiagonal
-    register_scalar(conn, "st_boxfromgeohash", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_box2d_from_geohash", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_boxfromgeohash
-    register_scalar(conn, "st_box_from_geohash", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_boxfromgeohash
-    register_scalar(conn, "st_buffer", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_buffer_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_buffer
-    register_scalar(conn, "st_bufferwithsegs", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_buffer_with_segs", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_bufferwithsegs
-    register_scalar(conn, "st_buildarea", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_build_area", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_buildarea
-    register_scalar(conn, "st_centroid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_centroid_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_centroid
-    register_scalar(conn, "st_centroidthreed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3dcentroid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_centroidthreed
-    register_scalar(conn, "st_centroid_threed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_centroidthreed
-    register_scalar(conn, "st_chaikinsmoothing", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_chaikin_smoothing", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_chaikinsmoothing
-    register_scalar(conn, "st_clipbybox2d", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_closestpoint", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_closest_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_closestpoint
-    register_scalar(conn, "st_geog_closest_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_closestpoint
-    register_scalar(conn, "st_closestpointofapproach", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_closest_point_of_approach", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_closestpointofapproach
-    register_scalar(conn, "st_clusterdbscan", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_cluster_dbscan", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_clusterdbscan
-    register_scalar(conn, "st_clusterintersecting", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_cluster_intersecting", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_clusterintersecting
-    register_scalar(conn, "st_clusterkmeans", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_cluster_kmeans", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_clusterkmeans
-    register_scalar(conn, "st_clusterwithin", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_cluster_within", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_clusterwithin
-    register_scalar(conn, "st_collect", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_collectionextract", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_collection_extract", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_collectionextract
-    register_scalar(conn, "st_collectionhomogenize", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_collection_homogenize", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_collectionhomogenize
-    register_scalar(conn, "st_concavehull", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_concave_hull", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_concavehull
-    register_scalar(conn, "st_contains", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_contains_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_contains
-    register_scalar(conn, "st_containsproperly", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_contains_properly", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_containsproperly
-    register_scalar(conn, "st_convexhull", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_convex_hull", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_convexhull
-    register_scalar(conn, "st_convex_hull_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_convexhull
-    register_scalar(conn, "st_geog_convex_hull", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_convexhull
-    register_scalar(conn, "st_convexhullthreed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3dconvexhull", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_convexhullthreed
-    register_scalar(conn, "st_convex_hull_threed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_convexhullthreed
-    register_scalar(conn, "st_coorddim", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_coord_dim", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_coorddim
-    register_scalar(conn, "st_coverageclean", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_coverage_clean", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_coverageclean
-    register_scalar(conn, "st_coverageinvalidedges", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_coverage_invalid_edges", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_coverageinvalidedges
-    register_scalar(conn, "st_coveragesimplify", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_coverage_simplify", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_coveragesimplify
-    register_scalar(conn, "st_coveredby", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_covered_by", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_coveredby
-    register_scalar(conn, "st_covers", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_covers_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_covers
-    register_scalar(conn, "st_cpawithin", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_cpa_within", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_cpawithin
-    register_scalar(conn, "st_createtopogeom", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_create_topo_geom", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_createtopogeom
-    register_scalar(conn, "st_createtopology", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_create_topology", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_createtopology
-    register_scalar(conn, "topology_create", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_createtopology
-    register_scalar(conn, "st_crosses", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_crosses_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_crosses
-    register_scalar(conn, "st_curvetoline", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_curve_to_line", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_curvetoline
-    register_scalar(conn, "st_delaunaytriangles", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_constrained_delaunay_triangles", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_delaunaytriangles
-    register_scalar(conn, "st_constraineddelaunaytriangles", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_delaunaytriangles
-    register_scalar(conn, "st_constrainedelaunaytriangles", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_delaunaytriangles
-    register_scalar(conn, "st_delaunay_triangles", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_delaunaytriangles
-    register_scalar(conn, "st_dfullywithin", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_dfully_within", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_dfullywithin
-    register_scalar(conn, "st_difference", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_difference_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_difference
-    register_scalar(conn, "st_geog_difference", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_difference
-    register_scalar(conn, "st_differencethreed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3ddifference", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_differencethreed
-    register_scalar(conn, "st_difference_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_differencethreed
-    register_scalar(conn, "st_dimension", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_disjoint", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_disjoint_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_disjoint
-    register_scalar(conn, "st_distance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_distance_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_distance
-    register_scalar(conn, "st_distancecpa", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_distance_cpa", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_distancecpa
-    register_scalar(conn, "st_distancesphere", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_distance_sphere", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_distancesphere
-    register_scalar(conn, "st_distance_sphere_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_distancesphere
-    register_scalar(conn, "st_distancespheroid", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_distance_spheroid", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_distancespheroid
-    register_scalar(conn, "st_distance_spheroid_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_distancespheroid
-    register_scalar(conn, "st_distancethreed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3ddistance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_distancethreed
-    register_scalar(conn, "st_distance_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_distancethreed
-    register_scalar(conn, "st_dumpaspolygons", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_dump_as_polygons", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_dumpaspolygons
-    register_scalar(conn, "st_dumpvalues", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_dump_values", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_dumpvalues
-    register_scalar(conn, "st_dwithin", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_d_within", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_dwithin
-    register_scalar(conn, "st_endpoint", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_end_point", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_endpoint
-    register_scalar(conn, "st_end_point_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_endpoint
-    register_scalar(conn, "st_envelope", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_envelope_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_envelope
-    register_scalar(conn, "st_envelopethreed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3denvelope", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_envelopethreed
-    register_scalar(conn, "st_envelope_threed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_envelopethreed
-    register_scalar(conn, "st_equals", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_equals_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_equals
-    register_scalar(conn, "st_equalsexact", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_equals_exact", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_equalsexact
-    register_scalar(conn, "st_expand", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_exteriorring", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_exterior_ring", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_exteriorring
-    register_scalar(conn, "st_extrude", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_filterbym", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_filter_by_m", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_filterbym
-    register_scalar(conn, "st_flipcoordinates", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_flip_coordinates", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_flipcoordinates
-    register_scalar(conn, "st_force2d", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_force_2d", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_force2d
-    register_scalar(conn, "st_force_twod", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_force2d
-    register_scalar(conn, "st_forcetwod", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_force2d
-    register_scalar(conn, "st_force3d", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_force3dz", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_force3d
-    register_scalar(conn, "st_force_3d", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_force3d
-    register_scalar(conn, "st_force_threed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_force3d
-    register_scalar(conn, "st_force_threedz", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_force3d
-    register_scalar(conn, "st_forcethreed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_force3d
-    register_scalar(conn, "st_forcethreedz", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_force3d
-    register_scalar(conn, "st_forcecollection", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_force_collection", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcecollection
-    register_scalar(conn, "st_forcecurve", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_force_curve", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcecurve
-    register_scalar(conn, "st_forcefourd", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_force4d", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcefourd
-    register_scalar(conn, "st_force_4d", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcefourd
-    register_scalar(conn, "st_force_fourd", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcefourd
-    register_scalar(conn, "st_forcepolygonccw", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_force_polygon_ccw", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcepolygonccw
-    register_scalar(conn, "st_forcepolygoncw", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_force_polygon_cw", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcepolygoncw
-    register_scalar(conn, "st_forcerhr", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_force_rhr", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcerhr
-    register_scalar(conn, "st_forcesfs", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_force_sfs", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcesfs
-    register_scalar(conn, "st_forcethreedm", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_force3dm", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcethreedm
-    register_scalar(conn, "st_force_3dm", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcethreedm
-    register_scalar(conn, "st_force_threedm", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_forcethreedm
-    register_scalar(conn, "st_frechetdistance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_frechet_distance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_frechetdistance
-    register_scalar(conn, "st_fromflatgeobuf", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_from_flatgeobuf", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_fromflatgeobuf
-    register_scalar(conn, "st_generatepoints", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_generate_points", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_generatepoints
-    register_scalar(conn, "st_geogarea", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_area", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogarea
-    register_scalar(conn, "st_geog_area_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogarea
-    register_scalar(conn, "st_geogazimuth", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_azimuth", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogazimuth
-    register_scalar(conn, "st_geog_azimuth_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogazimuth
-    register_scalar(conn, "st_geogbuffer", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_buffer", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogbuffer
-    register_scalar(conn, "st_geogbufferwithsegs", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_buffer_with_segs", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogbufferwithsegs
-    register_scalar(conn, "st_geogcentroid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_centroid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogcentroid
-    register_scalar(conn, "st_geogcoveredby", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_covered_by", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogcoveredby
-    register_scalar(conn, "st_geogcovers", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_covers", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogcovers
-    register_scalar(conn, "st_geogdistance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_distance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogdistance
-    register_scalar(conn, "st_geog_distance_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogdistance
-    register_scalar(conn, "st_geogdwithin", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_dwithin", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogdwithin
-    register_scalar(conn, "st_geog_dwithin_batch", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogdwithin
-    register_scalar(conn, "st_geogexpand", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_expand", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogexpand
-    register_scalar(conn, "st_geogfromewkt", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_from_ewkt", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogfromewkt
-    register_scalar(conn, "st_geogfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogfromtext
-    register_scalar(conn, "st_geogfromwkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_from_wkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogfromwkb
-    register_scalar(conn, "st_geoggeometrytype", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_geometry_type", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geoggeometrytype
-    register_scalar(conn, "st_geogintersects", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_intersects", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogintersects
-    register_scalar(conn, "st_geogisclosed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_is_closed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogisclosed
-    register_scalar(conn, "st_geogisempty", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_is_empty", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogisempty
-    register_scalar(conn, "st_geogissimple", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_is_simple", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogissimple
-    register_scalar(conn, "st_geoglength", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_length", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geoglength
-    register_scalar(conn, "st_geog_length_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geoglength
-    register_scalar(conn, "st_geognpoints", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_npoints", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geognpoints
-    register_scalar(conn, "st_geogperimeter", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_perimeter", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogperimeter
-    register_scalar(conn, "st_geog_perimeter_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogperimeter
-    register_scalar(conn, "st_geogpoint", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogpoint
-    register_scalar(conn, "st_geogsummary", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_summary", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogsummary
-    register_scalar(conn, "st_geogtogeom", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_to_geom", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geogtogeom
-    register_scalar(conn, "st_geohash", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geomequal", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geometricmedian", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geometric_median", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geometricmedian
-    register_scalar(conn, "st_geometryn", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_curve_n", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geometryn
-    register_scalar(conn, "st_curven", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geometryn
-    register_scalar(conn, "st_geometry_n", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geometryn
-    register_scalar(conn, "st_geometrytype", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geometry_type", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geometrytype
-    register_scalar(conn, "st_geometry_type_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geometrytype
-    register_scalar(conn, "st_geomfromewkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geom_from_ewkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromewkb
-    register_scalar(conn, "st_geomfromgeobuf", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geom_from_geobuf", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromgeobuf
-    register_scalar(conn, "st_geomfromgeohash", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_box2dfromgeohash", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromgeohash
-    register_scalar(conn, "st_geom_from_geohash", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromgeohash
-    register_scalar(conn, "st_geomfromgeojson", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geom_from_geojson", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromgeojson
-    register_scalar(conn, "st_geomfromgml", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geom_from_gml", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromgml
-    register_scalar(conn, "st_geomfromgmlsrid", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geom_from_gml_srid", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromgmlsrid
-    register_scalar(conn, "st_geomfromhexewkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geom_from_hexewkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromhexewkb
-    register_scalar(conn, "st_geomfromkml", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geom_from_kml", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromkml
-    register_scalar(conn, "st_geomfrommarc21", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geomfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geography_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_geographyfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_geom_from_ewkt", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_geom_from_marc21", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_geom_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_geomcoll_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_geomcollfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_geometry_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_geometryfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_geomfromewkt", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_line_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_linefromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_mline_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_mlinefromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_mpoint_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_mpointfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_mpoly_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_mpolyfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_point_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_pointfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_polygon_from_text", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_polygonfromtext", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_wkttosql", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtext
-    register_scalar(conn, "st_geomfromtextsrid", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geom_from_text_srid", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtextsrid
-    register_scalar(conn, "st_geomfromtwkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geom_from_twkb", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromtwkb
-    register_scalar(conn, "st_geomfromwkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geom_from_wkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_geomcoll_from_wkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_geomcollfromwkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_line_from_wkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_linefromwkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_mline_from_wkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_mlinefromwkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_mpoint_from_wkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_mpointfromwkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_mpoly_from_wkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_mpolyfromwkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_point_from_wkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_pointfromwkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_polygon_from_wkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_polygonfromwkb", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_wkbtosql", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_geomfromwkb
-    register_scalar(conn, "st_getedgebypoint", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_get_edge_by_point", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_getedgebypoint
-    register_scalar(conn, "topology_get_edge_by_point", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_getedgebypoint
-    register_scalar(conn, "st_getedgegeometry", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_get_edge_geometry", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_getedgegeometry
-    register_scalar(conn, "topology_get_edge_geometry", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_getedgegeometry
-    register_scalar(conn, "st_getfacegeometry", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_get_face_geometry", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_getfacegeometry
-    register_scalar(conn, "topology_get_face_geometry", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_getfacegeometry
-    register_scalar(conn, "st_getnodebypoint", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_get_node_by_point", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_getnodebypoint
-    register_scalar(conn, "topology_get_node_by_point", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_getnodebypoint
-    register_scalar(conn, "st_getnodegeometry", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_get_node_geometry", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_getnodegeometry
-    register_scalar(conn, "topology_get_node_geometry", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_getnodegeometry
-    register_scalar(conn, "st_gmltosql", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_gml_to_sql", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_gmltosql
-    register_scalar(conn, "st_hasarc", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_has_arc", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_hasarc
-    register_scalar(conn, "st_hasm", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_has_m", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_hasm
-    register_scalar(conn, "st_hasnoband", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_has_no_band", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_hasnoband
-    register_scalar(conn, "st_hasz", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_has_z", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_hasz
-    register_scalar(conn, "st_hausdorffdistance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_hausdorff_distance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_hausdorffdistance
-    register_scalar(conn, "st_height", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rast_height_dfer_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_height
-    register_scalar(conn, "st_rastheight", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_height
-    register_scalar(conn, "st_hexagon", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_hillshade", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_hill_shade", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_hillshade
-    register_scalar(conn, "st_histogram", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_interiorringn", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_interior_ring_n", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_interiorringn
-    register_scalar(conn, "st_interpolatepoint", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_interpolate_m", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_interpolatepoint
-    register_scalar(conn, "st_interpolate_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_interpolatepoint
-    register_scalar(conn, "st_intersection", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_clip_by_box2d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_intersection
-    register_scalar(conn, "st_geog_intersection", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_intersection
-    register_scalar(conn, "st_intersection_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_intersection
-    register_scalar(conn, "st_intersectionthreed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3dintersection", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_intersectionthreed
-    register_scalar(conn, "st_intersection_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_intersectionthreed
-    register_scalar(conn, "st_intersects", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_intersects_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_intersects
-    register_scalar(conn, "st_inversetransformpipeline", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_inverse_transform_pipeline", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_inversetransformpipeline
-    register_scalar(conn, "st_isclosed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_closed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_isclosed
-    register_scalar(conn, "st_iscollection", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_collection", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_iscollection
-    register_scalar(conn, "st_isempty", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_empty", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_isempty
-    register_scalar(conn, "st_is_empty_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_isempty
-    register_scalar(conn, "st_ispolygonccw", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_polygon_ccw", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_ispolygonccw
-    register_scalar(conn, "st_ispolygoncw", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_polygon_cw", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_ispolygoncw
-    register_scalar(conn, "st_isring", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_ring", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_isring
-    register_scalar(conn, "st_issimple", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_simple", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_issimple
-    register_scalar(conn, "st_is_simple_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_issimple
-    register_scalar(conn, "st_isvalid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_valid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_isvalid
-    register_scalar(conn, "st_is_valid_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_isvalid
-    register_scalar(conn, "st_isvaliddetail", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_valid_detail", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_isvaliddetail
-    register_scalar(conn, "st_isvalidreason", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_valid_reason", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_isvalidreason
-    register_scalar(conn, "st_isvalidtrajectory", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_is_valid_trajectory", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_isvalidtrajectory
-    register_scalar(conn, "st_knndistance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_largestemptycircle", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_largest_empty_circle", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_largestemptycircle
-    register_scalar(conn, "st_length", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_length2d", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_length
-    register_scalar(conn, "st_length_2d", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_length
-    register_scalar(conn, "st_length_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_length
-    register_scalar(conn, "st_length_twod", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_length
-    register_scalar(conn, "st_lengthspheroid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_length_spheroid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_lengthspheroid
-    register_scalar(conn, "st_lengththreed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3dlength", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_lengththreed
-    register_scalar(conn, "st_length_threed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_lengththreed
-    register_scalar(conn, "st_letters", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_linecrossingdirection", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_line_crossing_direction", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_linecrossingdirection
-    register_scalar(conn, "st_lineextend", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_line_extend", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_lineextend
-    register_scalar(conn, "st_linefromencodedpolyline", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_line_from_encoded_polyline", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_linefromencodedpolyline
-    register_scalar(conn, "st_linefrommultipoint", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_line_from_multi_point", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_linefrommultipoint
-    register_scalar(conn, "st_lineinterpolatepoint", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_line_interpolate_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_lineinterpolatepoint
-    register_scalar(conn, "st_lineinterpolatepoints", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_line_interpolate_points", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_lineinterpolatepoints
-    register_scalar(conn, "st_linelocatepoint", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_line_locate_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_linelocatepoint
-    register_scalar(conn, "st_linemerge", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_line_merge", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_linemerge
-    register_scalar(conn, "st_line_merge_directed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_linemerge
-    register_scalar(conn, "st_linesubstring", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_line_substring", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_linesubstring
-    register_scalar(conn, "st_line_substring", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_linesubstring
-    register_scalar(conn, "st_linetocurve", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_line_to_curve", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_linetocurve
-    register_scalar(conn, "st_locatealong", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_locate_along", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_locatealong
-    register_scalar(conn, "st_locatebetween", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_locate_between", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_locatebetween
-    register_scalar(conn, "st_locatebetweenelevations", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_locate_between_elevations", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_locatebetweenelevations
-    register_scalar(conn, "st_longestline", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_longest_line", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_longestline
-    register_scalar(conn, "st_m", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_m_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_m
-    register_scalar(conn, "st_makebox2d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_make_box2d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makebox2d
-    register_scalar(conn, "st_makebox", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makebox2d
-    register_scalar(conn, "st_makebox3d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3d_make_box", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makebox3d
-    register_scalar(conn, "st_3dmakebox", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makebox3d
-    register_scalar(conn, "st_make_box3d", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makebox3d
-    register_scalar(conn, "st_makeemptyraster", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_make_empty_raster", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makeemptyraster
-    register_scalar(conn, "st_makeenvelope", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_make_envelope", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makeenvelope
-    register_scalar(conn, "st_makeenvelopesrid", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_make_envelope_srid", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makeenvelopesrid
-    register_scalar(conn, "st_makepoint", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_make_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepoint
-    register_scalar(conn, "st_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepoint
-    register_scalar(conn, "st_makepointm", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_make_point_m", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepointm
-    register_scalar(conn, "st_point_m", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepointm
-    register_scalar(conn, "st_pointm", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepointm
-    register_scalar(conn, "st_makepointz", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_make_point_z", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepointz
-    register_scalar(conn, "st_point_z", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepointz
-    register_scalar(conn, "st_pointz", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepointz
-    register_scalar(conn, "st_makepointzm", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_make_point_zm", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepointzm
-    register_scalar(conn, "st_point_zm", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepointzm
-    register_scalar(conn, "st_pointzm", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepointzm
-    register_scalar(conn, "st_makepolygon", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_make_polygon", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makepolygon
-    register_scalar(conn, "st_makevalid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_make_valid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_makevalid
-    register_scalar(conn, "st_mapalgebra", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_map_algebra", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_mapalgebra
-    register_scalar(conn, "st_mapalgebra2", 6, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_map_algebra2", 6, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_mapalgebra2
-    register_scalar(conn, "st_maxdistance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_max_distance", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_maxdistance
-    register_scalar(conn, "st_maximuminscribedcircle", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_maximum_inscribed_circle", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_maximuminscribedcircle
-    register_scalar(conn, "st_memsize", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_mem_size", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_memsize
-    register_scalar(conn, "st_minimumboundingcircle", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_minimum_bounding_circle", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_minimumboundingcircle
-    register_scalar(conn, "st_minimumboundingradius", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_minimum_bounding_radius", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_minimumboundingradius
-    register_scalar(conn, "st_minimumclearance", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_minimum_clearance", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_minimumclearance
-    register_scalar(conn, "st_minimumclearanceline", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_minimum_clearance_line", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_minimumclearanceline
-    register_scalar(conn, "st_minkowskisum", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_minkowski_sum", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_minkowskisum
-    register_scalar(conn, "st_mmax", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_mmin", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
+    register_scalar(
+        conn,
+        "st_addmeasure",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_add_measure",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_addmeasure
+    register_scalar(
+        conn,
+        "st_addpoint",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_add_point",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_addpoint
+    register_scalar(
+        conn,
+        "st_affine",
+        7,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_angle",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_approximatemedialaxis",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_approximate_medial_axis",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_approximatemedialaxis
+    register_scalar(
+        conn,
+        "st_area",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_area_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_area
+    register_scalar(
+        conn,
+        "st_areathreed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3darea",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_areathreed
+    register_scalar(
+        conn,
+        "st_area_threed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_areathreed
+    register_scalar(
+        conn,
+        "st_arraycols",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_array_cols",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_arraycols
+    register_scalar(
+        conn,
+        "st_arrayrows",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_array_rows",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_arrayrows
+    register_scalar(
+        conn,
+        "st_arrayvalue",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_array_value",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_arrayvalue
+    register_scalar(
+        conn,
+        "st_asbinary",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_binary",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asbinary
+    register_scalar(
+        conn,
+        "st_asencodedpolyline",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_encoded_polyline",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asencodedpolyline
+    register_scalar(
+        conn,
+        "st_asewkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_ewkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asewkb
+    register_scalar(
+        conn,
+        "st_asewkt",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_ewkt",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asewkt
+    register_scalar(
+        conn,
+        "st_asflatgeobuf",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_flatgeobuf",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asflatgeobuf
+    register_scalar(
+        conn,
+        "st_asgeobuf",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_geobuf",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asgeobuf
+    register_scalar(
+        conn,
+        "st_asgeogtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_geog_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asgeogtext
+    register_scalar(
+        conn,
+        "st_asgeojson",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_geojson",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asgeojson
+    register_scalar(
+        conn,
+        "st_asgml",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_gml",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asgml
+    register_scalar(
+        conn,
+        "st_ashexewkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_hexewkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_ashexewkb
+    register_scalar(
+        conn,
+        "st_askml",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_kml",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_askml
+    register_scalar(
+        conn,
+        "st_aslatlontext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_lat_lon_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_aslatlontext
+    register_scalar(
+        conn,
+        "st_asmarc21",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_asmvt",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_mvt",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asmvt
+    register_scalar(
+        conn,
+        "st_asmvtgeom",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_mvt_geom",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asmvtgeom
+    register_scalar(
+        conn,
+        "st_aspect",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_aspng",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_png",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_aspng
+    register_scalar(
+        conn,
+        "st_assvg",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_svg",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_assvg
+    register_scalar(
+        conn,
+        "st_astext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_marc21",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_astext
+    register_scalar(
+        conn,
+        "st_as_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_astext
+    register_scalar(
+        conn,
+        "st_astiff",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_tiff",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_astiff
+    register_scalar(
+        conn,
+        "st_astopojson",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_topo_json",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_astopojson
+    register_scalar(
+        conn,
+        "topology_as_topojson",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_astopojson
+    register_scalar(
+        conn,
+        "st_astwkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_twkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_astwkb
+    register_scalar(
+        conn,
+        "st_asx3d",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_as_x3d",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_asx3d
+    register_scalar(
+        conn,
+        "st_azimuth",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bandnodatavalue",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_band_nodata_value",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_bandnodatavalue
+    register_scalar(
+        conn,
+        "st_bandpixeltype",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_band_pixel_type",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_bandpixeltype
+    register_scalar(
+        conn,
+        "st_bboxabove",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bbox_above",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_bboxabove
+    register_scalar(
+        conn,
+        "st_bboxbelow",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bbox_below",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_bboxbelow
+    register_scalar(
+        conn,
+        "st_bboxdistance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bboxintersects",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bboxintersectsnd",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bboxleftof",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bbox_left_of",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_bboxleftof
+    register_scalar(
+        conn,
+        "st_bboxoverright",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bbox_over_right",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_bboxoverright
+    register_scalar(
+        conn,
+        "st_bboxrightof",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bbox_right_of",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_bboxrightof
+    register_scalar(
+        conn,
+        "st_bdmpolyfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bd_mpoly_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_bdmpolyfromtext
+    register_scalar(
+        conn,
+        "st_bdpolyfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bd_poly_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_bdpolyfromtext
+    register_scalar(
+        conn,
+        "st_boundary",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_boundary_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_boundary
+    register_scalar(
+        conn,
+        "st_boundarythreed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3dboundary",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_boundarythreed
+    register_scalar(
+        conn,
+        "st_boundary_threed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_boundarythreed
+    register_scalar(
+        conn,
+        "st_boundingdiagonal",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_bounding_diagonal",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_boundingdiagonal
+    register_scalar(
+        conn,
+        "st_boxfromgeohash",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_box2d_from_geohash",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_boxfromgeohash
+    register_scalar(
+        conn,
+        "st_box_from_geohash",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_boxfromgeohash
+    register_scalar(
+        conn,
+        "st_buffer",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_buffer_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_buffer
+    register_scalar(
+        conn,
+        "st_bufferwithsegs",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_buffer_with_segs",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_bufferwithsegs
+    register_scalar(
+        conn,
+        "st_buildarea",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_build_area",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_buildarea
+    register_scalar(
+        conn,
+        "st_centroid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_centroid_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_centroid
+    register_scalar(
+        conn,
+        "st_centroidthreed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3dcentroid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_centroidthreed
+    register_scalar(
+        conn,
+        "st_centroid_threed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_centroidthreed
+    register_scalar(
+        conn,
+        "st_chaikinsmoothing",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_chaikin_smoothing",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_chaikinsmoothing
+    register_scalar(
+        conn,
+        "st_clipbybox2d",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_closestpoint",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_closest_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_closestpoint
+    register_scalar(
+        conn,
+        "st_geog_closest_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_closestpoint
+    register_scalar(
+        conn,
+        "st_closestpointofapproach",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_closest_point_of_approach",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_closestpointofapproach
+    register_scalar(
+        conn,
+        "st_clusterdbscan",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_cluster_dbscan",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_clusterdbscan
+    register_scalar(
+        conn,
+        "st_clusterintersecting",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_cluster_intersecting",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_clusterintersecting
+    register_scalar(
+        conn,
+        "st_clusterkmeans",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_cluster_kmeans",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_clusterkmeans
+    register_scalar(
+        conn,
+        "st_clusterwithin",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_cluster_within",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_clusterwithin
+    register_scalar(
+        conn,
+        "st_collect",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_collectionextract",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_collection_extract",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_collectionextract
+    register_scalar(
+        conn,
+        "st_collectionhomogenize",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_collection_homogenize",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_collectionhomogenize
+    register_scalar(
+        conn,
+        "st_concavehull",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_concave_hull",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_concavehull
+    register_scalar(
+        conn,
+        "st_contains",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_contains_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_contains
+    register_scalar(
+        conn,
+        "st_containsproperly",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_contains_properly",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_containsproperly
+    register_scalar(
+        conn,
+        "st_convexhull",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_convex_hull",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_convexhull
+    register_scalar(
+        conn,
+        "st_convex_hull_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_convexhull
+    register_scalar(
+        conn,
+        "st_geog_convex_hull",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_convexhull
+    register_scalar(
+        conn,
+        "st_convexhullthreed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3dconvexhull",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_convexhullthreed
+    register_scalar(
+        conn,
+        "st_convex_hull_threed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_convexhullthreed
+    register_scalar(
+        conn,
+        "st_coorddim",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_coord_dim",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_coorddim
+    register_scalar(
+        conn,
+        "st_coverageclean",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_coverage_clean",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_coverageclean
+    register_scalar(
+        conn,
+        "st_coverageinvalidedges",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_coverage_invalid_edges",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_coverageinvalidedges
+    register_scalar(
+        conn,
+        "st_coveragesimplify",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_coverage_simplify",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_coveragesimplify
+    register_scalar(
+        conn,
+        "st_coveredby",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_covered_by",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_coveredby
+    register_scalar(
+        conn,
+        "st_covers",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_covers_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_covers
+    register_scalar(
+        conn,
+        "st_cpawithin",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_cpa_within",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_cpawithin
+    register_scalar(
+        conn,
+        "st_createtopogeom",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_create_topo_geom",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_createtopogeom
+    register_scalar(
+        conn,
+        "st_createtopology",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_create_topology",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_createtopology
+    register_scalar(
+        conn,
+        "topology_create",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_createtopology
+    register_scalar(
+        conn,
+        "st_crosses",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_crosses_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_crosses
+    register_scalar(
+        conn,
+        "st_curvetoline",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_curve_to_line",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_curvetoline
+    register_scalar(
+        conn,
+        "st_delaunaytriangles",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_constrained_delaunay_triangles",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_delaunaytriangles
+    register_scalar(
+        conn,
+        "st_constraineddelaunaytriangles",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_delaunaytriangles
+    register_scalar(
+        conn,
+        "st_constrainedelaunaytriangles",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_delaunaytriangles
+    register_scalar(
+        conn,
+        "st_delaunay_triangles",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_delaunaytriangles
+    register_scalar(
+        conn,
+        "st_dfullywithin",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_dfully_within",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_dfullywithin
+    register_scalar(
+        conn,
+        "st_difference",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_difference_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_difference
+    register_scalar(
+        conn,
+        "st_geog_difference",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_difference
+    register_scalar(
+        conn,
+        "st_differencethreed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3ddifference",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_differencethreed
+    register_scalar(
+        conn,
+        "st_difference_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_differencethreed
+    register_scalar(
+        conn,
+        "st_dimension",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_disjoint",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_disjoint_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_disjoint
+    register_scalar(
+        conn,
+        "st_distance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_distance_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_distance
+    register_scalar(
+        conn,
+        "st_distancecpa",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_distance_cpa",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_distancecpa
+    register_scalar(
+        conn,
+        "st_distancesphere",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_distance_sphere",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_distancesphere
+    register_scalar(
+        conn,
+        "st_distance_sphere_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_distancesphere
+    register_scalar(
+        conn,
+        "st_distancespheroid",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_distance_spheroid",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_distancespheroid
+    register_scalar(
+        conn,
+        "st_distance_spheroid_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_distancespheroid
+    register_scalar(
+        conn,
+        "st_distancethreed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3ddistance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_distancethreed
+    register_scalar(
+        conn,
+        "st_distance_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_distancethreed
+    register_scalar(
+        conn,
+        "st_dumpaspolygons",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_dump_as_polygons",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_dumpaspolygons
+    register_scalar(
+        conn,
+        "st_dumpvalues",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_dump_values",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_dumpvalues
+    register_scalar(
+        conn,
+        "st_dwithin",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_d_within",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_dwithin
+    register_scalar(
+        conn,
+        "st_endpoint",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_end_point",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_endpoint
+    register_scalar(
+        conn,
+        "st_end_point_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_endpoint
+    register_scalar(
+        conn,
+        "st_envelope",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_envelope_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_envelope
+    register_scalar(
+        conn,
+        "st_envelopethreed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3denvelope",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_envelopethreed
+    register_scalar(
+        conn,
+        "st_envelope_threed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_envelopethreed
+    register_scalar(
+        conn,
+        "st_equals",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_equals_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_equals
+    register_scalar(
+        conn,
+        "st_equalsexact",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_equals_exact",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_equalsexact
+    register_scalar(
+        conn,
+        "st_expand",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_exteriorring",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_exterior_ring",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_exteriorring
+    register_scalar(
+        conn,
+        "st_extrude",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_filterbym",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_filter_by_m",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_filterbym
+    register_scalar(
+        conn,
+        "st_flipcoordinates",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_flip_coordinates",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_flipcoordinates
+    register_scalar(
+        conn,
+        "st_force2d",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_force_2d",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_force2d
+    register_scalar(
+        conn,
+        "st_force_twod",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_force2d
+    register_scalar(
+        conn,
+        "st_forcetwod",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_force2d
+    register_scalar(
+        conn,
+        "st_force3d",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_force3dz",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_force3d
+    register_scalar(
+        conn,
+        "st_force_3d",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_force3d
+    register_scalar(
+        conn,
+        "st_force_threed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_force3d
+    register_scalar(
+        conn,
+        "st_force_threedz",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_force3d
+    register_scalar(
+        conn,
+        "st_forcethreed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_force3d
+    register_scalar(
+        conn,
+        "st_forcethreedz",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_force3d
+    register_scalar(
+        conn,
+        "st_forcecollection",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_force_collection",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcecollection
+    register_scalar(
+        conn,
+        "st_forcecurve",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_force_curve",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcecurve
+    register_scalar(
+        conn,
+        "st_forcefourd",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_force4d",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcefourd
+    register_scalar(
+        conn,
+        "st_force_4d",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcefourd
+    register_scalar(
+        conn,
+        "st_force_fourd",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcefourd
+    register_scalar(
+        conn,
+        "st_forcepolygonccw",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_force_polygon_ccw",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcepolygonccw
+    register_scalar(
+        conn,
+        "st_forcepolygoncw",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_force_polygon_cw",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcepolygoncw
+    register_scalar(
+        conn,
+        "st_forcerhr",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_force_rhr",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcerhr
+    register_scalar(
+        conn,
+        "st_forcesfs",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_force_sfs",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcesfs
+    register_scalar(
+        conn,
+        "st_forcethreedm",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_force3dm",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcethreedm
+    register_scalar(
+        conn,
+        "st_force_3dm",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcethreedm
+    register_scalar(
+        conn,
+        "st_force_threedm",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_forcethreedm
+    register_scalar(
+        conn,
+        "st_frechetdistance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_frechet_distance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_frechetdistance
+    register_scalar(
+        conn,
+        "st_fromflatgeobuf",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_from_flatgeobuf",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_fromflatgeobuf
+    register_scalar(
+        conn,
+        "st_generatepoints",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_generate_points",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_generatepoints
+    register_scalar(
+        conn,
+        "st_geogarea",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_area",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogarea
+    register_scalar(
+        conn,
+        "st_geog_area_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogarea
+    register_scalar(
+        conn,
+        "st_geogazimuth",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_azimuth",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogazimuth
+    register_scalar(
+        conn,
+        "st_geog_azimuth_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogazimuth
+    register_scalar(
+        conn,
+        "st_geogbuffer",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_buffer",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogbuffer
+    register_scalar(
+        conn,
+        "st_geogbufferwithsegs",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_buffer_with_segs",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogbufferwithsegs
+    register_scalar(
+        conn,
+        "st_geogcentroid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_centroid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogcentroid
+    register_scalar(
+        conn,
+        "st_geogcoveredby",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_covered_by",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogcoveredby
+    register_scalar(
+        conn,
+        "st_geogcovers",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_covers",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogcovers
+    register_scalar(
+        conn,
+        "st_geogdistance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_distance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogdistance
+    register_scalar(
+        conn,
+        "st_geog_distance_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogdistance
+    register_scalar(
+        conn,
+        "st_geogdwithin",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_dwithin",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogdwithin
+    register_scalar(
+        conn,
+        "st_geog_dwithin_batch",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogdwithin
+    register_scalar(
+        conn,
+        "st_geogexpand",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_expand",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogexpand
+    register_scalar(
+        conn,
+        "st_geogfromewkt",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_from_ewkt",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogfromewkt
+    register_scalar(
+        conn,
+        "st_geogfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogfromtext
+    register_scalar(
+        conn,
+        "st_geogfromwkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_from_wkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogfromwkb
+    register_scalar(
+        conn,
+        "st_geoggeometrytype",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_geometry_type",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geoggeometrytype
+    register_scalar(
+        conn,
+        "st_geogintersects",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_intersects",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogintersects
+    register_scalar(
+        conn,
+        "st_geogisclosed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_is_closed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogisclosed
+    register_scalar(
+        conn,
+        "st_geogisempty",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_is_empty",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogisempty
+    register_scalar(
+        conn,
+        "st_geogissimple",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_is_simple",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogissimple
+    register_scalar(
+        conn,
+        "st_geoglength",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_length",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geoglength
+    register_scalar(
+        conn,
+        "st_geog_length_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geoglength
+    register_scalar(
+        conn,
+        "st_geognpoints",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_npoints",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geognpoints
+    register_scalar(
+        conn,
+        "st_geogperimeter",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_perimeter",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogperimeter
+    register_scalar(
+        conn,
+        "st_geog_perimeter_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogperimeter
+    register_scalar(
+        conn,
+        "st_geogpoint",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogpoint
+    register_scalar(
+        conn,
+        "st_geogsummary",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_summary",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogsummary
+    register_scalar(
+        conn,
+        "st_geogtogeom",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_to_geom",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geogtogeom
+    register_scalar(
+        conn,
+        "st_geohash",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geomequal",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geometricmedian",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geometric_median",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geometricmedian
+    register_scalar(
+        conn,
+        "st_geometryn",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_curve_n",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geometryn
+    register_scalar(
+        conn,
+        "st_curven",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geometryn
+    register_scalar(
+        conn,
+        "st_geometry_n",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geometryn
+    register_scalar(
+        conn,
+        "st_geometrytype",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geometry_type",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geometrytype
+    register_scalar(
+        conn,
+        "st_geometry_type_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geometrytype
+    register_scalar(
+        conn,
+        "st_geomfromewkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geom_from_ewkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromewkb
+    register_scalar(
+        conn,
+        "st_geomfromgeobuf",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geom_from_geobuf",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromgeobuf
+    register_scalar(
+        conn,
+        "st_geomfromgeohash",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_box2dfromgeohash",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromgeohash
+    register_scalar(
+        conn,
+        "st_geom_from_geohash",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromgeohash
+    register_scalar(
+        conn,
+        "st_geomfromgeojson",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geom_from_geojson",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromgeojson
+    register_scalar(
+        conn,
+        "st_geomfromgml",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geom_from_gml",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromgml
+    register_scalar(
+        conn,
+        "st_geomfromgmlsrid",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geom_from_gml_srid",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromgmlsrid
+    register_scalar(
+        conn,
+        "st_geomfromhexewkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geom_from_hexewkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromhexewkb
+    register_scalar(
+        conn,
+        "st_geomfromkml",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geom_from_kml",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromkml
+    register_scalar(
+        conn,
+        "st_geomfrommarc21",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geomfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geography_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_geographyfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_geom_from_ewkt",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_geom_from_marc21",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_geom_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_geomcoll_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_geomcollfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_geometry_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_geometryfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_geomfromewkt",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_line_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_linefromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_mline_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_mlinefromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_mpoint_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_mpointfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_mpoly_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_mpolyfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_point_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_pointfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_polygon_from_text",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_polygonfromtext",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_wkttosql",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtext
+    register_scalar(
+        conn,
+        "st_geomfromtextsrid",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geom_from_text_srid",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtextsrid
+    register_scalar(
+        conn,
+        "st_geomfromtwkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geom_from_twkb",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromtwkb
+    register_scalar(
+        conn,
+        "st_geomfromwkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geom_from_wkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_geomcoll_from_wkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_geomcollfromwkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_line_from_wkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_linefromwkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_mline_from_wkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_mlinefromwkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_mpoint_from_wkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_mpointfromwkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_mpoly_from_wkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_mpolyfromwkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_point_from_wkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_pointfromwkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_polygon_from_wkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_polygonfromwkb",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_wkbtosql",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_geomfromwkb
+    register_scalar(
+        conn,
+        "st_getedgebypoint",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_get_edge_by_point",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_getedgebypoint
+    register_scalar(
+        conn,
+        "topology_get_edge_by_point",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_getedgebypoint
+    register_scalar(
+        conn,
+        "st_getedgegeometry",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_get_edge_geometry",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_getedgegeometry
+    register_scalar(
+        conn,
+        "topology_get_edge_geometry",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_getedgegeometry
+    register_scalar(
+        conn,
+        "st_getfacegeometry",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_get_face_geometry",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_getfacegeometry
+    register_scalar(
+        conn,
+        "topology_get_face_geometry",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_getfacegeometry
+    register_scalar(
+        conn,
+        "st_getnodebypoint",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_get_node_by_point",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_getnodebypoint
+    register_scalar(
+        conn,
+        "topology_get_node_by_point",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_getnodebypoint
+    register_scalar(
+        conn,
+        "st_getnodegeometry",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_get_node_geometry",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_getnodegeometry
+    register_scalar(
+        conn,
+        "topology_get_node_geometry",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_getnodegeometry
+    register_scalar(
+        conn,
+        "st_gmltosql",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_gml_to_sql",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_gmltosql
+    register_scalar(
+        conn,
+        "st_hasarc",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_has_arc",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_hasarc
+    register_scalar(
+        conn,
+        "st_hasm",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_has_m",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_hasm
+    register_scalar(
+        conn,
+        "st_hasnoband",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_has_no_band",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_hasnoband
+    register_scalar(
+        conn,
+        "st_hasz",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_has_z",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_hasz
+    register_scalar(
+        conn,
+        "st_hausdorffdistance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_hausdorff_distance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_hausdorffdistance
+    register_scalar(
+        conn,
+        "st_height",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rast_height_dfer_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_height
+    register_scalar(
+        conn,
+        "st_rastheight",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_height
+    register_scalar(
+        conn,
+        "st_hexagon",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_hillshade",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_hill_shade",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_hillshade
+    register_scalar(
+        conn,
+        "st_histogram",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_interiorringn",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_interior_ring_n",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_interiorringn
+    register_scalar(
+        conn,
+        "st_interpolatepoint",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_interpolate_m",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_interpolatepoint
+    register_scalar(
+        conn,
+        "st_interpolate_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_interpolatepoint
+    register_scalar(
+        conn,
+        "st_intersection",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_clip_by_box2d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_intersection
+    register_scalar(
+        conn,
+        "st_geog_intersection",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_intersection
+    register_scalar(
+        conn,
+        "st_intersection_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_intersection
+    register_scalar(
+        conn,
+        "st_intersectionthreed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3dintersection",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_intersectionthreed
+    register_scalar(
+        conn,
+        "st_intersection_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_intersectionthreed
+    register_scalar(
+        conn,
+        "st_intersects",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_intersects_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_intersects
+    register_scalar(
+        conn,
+        "st_inversetransformpipeline",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_inverse_transform_pipeline",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_inversetransformpipeline
+    register_scalar(
+        conn,
+        "st_isclosed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_closed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_isclosed
+    register_scalar(
+        conn,
+        "st_iscollection",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_collection",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_iscollection
+    register_scalar(
+        conn,
+        "st_isempty",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_empty",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_isempty
+    register_scalar(
+        conn,
+        "st_is_empty_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_isempty
+    register_scalar(
+        conn,
+        "st_ispolygonccw",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_polygon_ccw",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_ispolygonccw
+    register_scalar(
+        conn,
+        "st_ispolygoncw",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_polygon_cw",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_ispolygoncw
+    register_scalar(
+        conn,
+        "st_isring",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_ring",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_isring
+    register_scalar(
+        conn,
+        "st_issimple",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_simple",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_issimple
+    register_scalar(
+        conn,
+        "st_is_simple_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_issimple
+    register_scalar(
+        conn,
+        "st_isvalid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_valid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_isvalid
+    register_scalar(
+        conn,
+        "st_is_valid_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_isvalid
+    register_scalar(
+        conn,
+        "st_isvaliddetail",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_valid_detail",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_isvaliddetail
+    register_scalar(
+        conn,
+        "st_isvalidreason",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_valid_reason",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_isvalidreason
+    register_scalar(
+        conn,
+        "st_isvalidtrajectory",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_is_valid_trajectory",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_isvalidtrajectory
+    register_scalar(
+        conn,
+        "st_knndistance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_largestemptycircle",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_largest_empty_circle",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_largestemptycircle
+    register_scalar(
+        conn,
+        "st_length",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_length2d",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_length
+    register_scalar(
+        conn,
+        "st_length_2d",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_length
+    register_scalar(
+        conn,
+        "st_length_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_length
+    register_scalar(
+        conn,
+        "st_length_twod",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_length
+    register_scalar(
+        conn,
+        "st_lengthspheroid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_length_spheroid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_lengthspheroid
+    register_scalar(
+        conn,
+        "st_lengththreed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3dlength",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_lengththreed
+    register_scalar(
+        conn,
+        "st_length_threed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_lengththreed
+    register_scalar(
+        conn,
+        "st_letters",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_linecrossingdirection",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_line_crossing_direction",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_linecrossingdirection
+    register_scalar(
+        conn,
+        "st_lineextend",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_line_extend",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_lineextend
+    register_scalar(
+        conn,
+        "st_linefromencodedpolyline",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_line_from_encoded_polyline",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_linefromencodedpolyline
+    register_scalar(
+        conn,
+        "st_linefrommultipoint",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_line_from_multi_point",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_linefrommultipoint
+    register_scalar(
+        conn,
+        "st_lineinterpolatepoint",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_line_interpolate_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_lineinterpolatepoint
+    register_scalar(
+        conn,
+        "st_lineinterpolatepoints",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_line_interpolate_points",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_lineinterpolatepoints
+    register_scalar(
+        conn,
+        "st_linelocatepoint",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_line_locate_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_linelocatepoint
+    register_scalar(
+        conn,
+        "st_linemerge",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_line_merge",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_linemerge
+    register_scalar(
+        conn,
+        "st_line_merge_directed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_linemerge
+    register_scalar(
+        conn,
+        "st_linesubstring",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_line_substring",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_linesubstring
+    register_scalar(
+        conn,
+        "st_line_substring",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_linesubstring
+    register_scalar(
+        conn,
+        "st_linetocurve",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_line_to_curve",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_linetocurve
+    register_scalar(
+        conn,
+        "st_locatealong",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_locate_along",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_locatealong
+    register_scalar(
+        conn,
+        "st_locatebetween",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_locate_between",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_locatebetween
+    register_scalar(
+        conn,
+        "st_locatebetweenelevations",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_locate_between_elevations",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_locatebetweenelevations
+    register_scalar(
+        conn,
+        "st_longestline",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_longest_line",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_longestline
+    register_scalar(
+        conn,
+        "st_m",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_m_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_m
+    register_scalar(
+        conn,
+        "st_makebox2d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_make_box2d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makebox2d
+    register_scalar(
+        conn,
+        "st_makebox",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makebox2d
+    register_scalar(
+        conn,
+        "st_makebox3d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3d_make_box",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makebox3d
+    register_scalar(
+        conn,
+        "st_3dmakebox",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makebox3d
+    register_scalar(
+        conn,
+        "st_make_box3d",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makebox3d
+    register_scalar(
+        conn,
+        "st_makeemptyraster",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_make_empty_raster",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makeemptyraster
+    register_scalar(
+        conn,
+        "st_makeenvelope",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_make_envelope",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makeenvelope
+    register_scalar(
+        conn,
+        "st_makeenvelopesrid",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_make_envelope_srid",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makeenvelopesrid
+    register_scalar(
+        conn,
+        "st_makepoint",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_make_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepoint
+    register_scalar(
+        conn,
+        "st_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepoint
+    register_scalar(
+        conn,
+        "st_makepointm",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_make_point_m",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepointm
+    register_scalar(
+        conn,
+        "st_point_m",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepointm
+    register_scalar(
+        conn,
+        "st_pointm",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepointm
+    register_scalar(
+        conn,
+        "st_makepointz",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_make_point_z",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepointz
+    register_scalar(
+        conn,
+        "st_point_z",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepointz
+    register_scalar(
+        conn,
+        "st_pointz",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepointz
+    register_scalar(
+        conn,
+        "st_makepointzm",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_make_point_zm",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepointzm
+    register_scalar(
+        conn,
+        "st_point_zm",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepointzm
+    register_scalar(
+        conn,
+        "st_pointzm",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepointzm
+    register_scalar(
+        conn,
+        "st_makepolygon",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_make_polygon",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makepolygon
+    register_scalar(
+        conn,
+        "st_makevalid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_make_valid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_makevalid
+    register_scalar(
+        conn,
+        "st_mapalgebra",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_map_algebra",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_mapalgebra
+    register_scalar(
+        conn,
+        "st_mapalgebra2",
+        6,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_map_algebra2",
+        6,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_mapalgebra2
+    register_scalar(
+        conn,
+        "st_maxdistance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_max_distance",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_maxdistance
+    register_scalar(
+        conn,
+        "st_maximuminscribedcircle",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_maximum_inscribed_circle",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_maximuminscribedcircle
+    register_scalar(
+        conn,
+        "st_memsize",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_mem_size",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_memsize
+    register_scalar(
+        conn,
+        "st_minimumboundingcircle",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_minimum_bounding_circle",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_minimumboundingcircle
+    register_scalar(
+        conn,
+        "st_minimumboundingradius",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_minimum_bounding_radius",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_minimumboundingradius
+    register_scalar(
+        conn,
+        "st_minimumclearance",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_minimum_clearance",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_minimumclearance
+    register_scalar(
+        conn,
+        "st_minimumclearanceline",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_minimum_clearance_line",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_minimumclearanceline
+    register_scalar(
+        conn,
+        "st_minkowskisum",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_minkowski_sum",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_minkowskisum
+    register_scalar(
+        conn,
+        "st_mmax",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_mmin",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
     register_scalar(conn, "st_modedgeheal", 3, FunctionFlags::SQLITE_UTF8)?;
     register_scalar(conn, "st_mod_edge_heal", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_modedgeheal
-    register_scalar(conn, "topology_mod_edge_heal", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_modedgeheal
+    register_scalar(
+        conn,
+        "topology_mod_edge_heal",
+        3,
+        FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_modedgeheal
     register_scalar(conn, "st_modedgeheal2", 3, FunctionFlags::SQLITE_UTF8)?;
     register_scalar(conn, "st_mod_edge_heal2", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_modedgeheal2
     register_scalar(conn, "st_modedgesplit", 3, FunctionFlags::SQLITE_UTF8)?;
     register_scalar(conn, "st_mod_edge_split", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_modedgesplit
-    register_scalar(conn, "topology_mod_edge_split", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_modedgesplit
+    register_scalar(
+        conn,
+        "topology_mod_edge_split",
+        3,
+        FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_modedgesplit
     register_scalar(conn, "st_modedgesplit2", 3, FunctionFlags::SQLITE_UTF8)?;
     register_scalar(conn, "st_mod_edge_split2", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_modedgesplit2
-    register_scalar(conn, "st_multi", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_ndims", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_n_dims", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_ndims
-    register_scalar(conn, "st_n_dims_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_ndims
-    register_scalar(conn, "st_nearestvalue", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_nearest_value", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_nearestvalue
+    register_scalar(
+        conn,
+        "st_multi",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_ndims",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_n_dims",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_ndims
+    register_scalar(
+        conn,
+        "st_n_dims_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_ndims
+    register_scalar(
+        conn,
+        "st_nearestvalue",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_nearest_value",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_nearestvalue
     register_scalar(conn, "st_newedgessplit", 3, FunctionFlags::SQLITE_UTF8)?;
     register_scalar(conn, "st_new_edges_split", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_newedgessplit
-    register_scalar(conn, "topology_new_edges_split", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_newedgessplit
+    register_scalar(
+        conn,
+        "topology_new_edges_split",
+        3,
+        FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_newedgessplit
     register_scalar(conn, "st_newedgessplit2", 3, FunctionFlags::SQLITE_UTF8)?;
     register_scalar(conn, "st_new_edges_split2", 3, FunctionFlags::SQLITE_UTF8)?; // alias of st_newedgessplit2
-    register_scalar(conn, "st_node", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_normalize", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_normalizeaddress", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_normalize_address", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_normalizeaddress
-    register_scalar(conn, "st_npoints", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_num_points", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_npoints
-    register_scalar(conn, "st_num_points_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_npoints
-    register_scalar(conn, "st_numpoints", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_npoints
-    register_scalar(conn, "st_nrings", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_numbands", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_num_bands", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_numbands
-    register_scalar(conn, "st_rastnumbands", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_numbands
-    register_scalar(conn, "st_numgeometries", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_num_curves", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_numgeometries
-    register_scalar(conn, "st_num_geometries", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_numgeometries
-    register_scalar(conn, "st_num_geometries_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_numgeometries
-    register_scalar(conn, "st_numcurves", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_numgeometries
-    register_scalar(conn, "st_numinteriorrings", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_num_interior_rings", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_numinteriorrings
-    register_scalar(conn, "st_numinteriorring", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_numinteriorrings
-    register_scalar(conn, "st_offsetcurve", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_offset_curve", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_offsetcurve
-    register_scalar(conn, "st_orderingequals", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_ordering_equals", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_orderingequals
-    register_scalar(conn, "st_orientedenvelope", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_oriented_envelope", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_orientedenvelope
-    register_scalar(conn, "st_overlaps", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_overlaps_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_overlaps
-    register_scalar(conn, "st_parseaddress", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_parse_address", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_parseaddress
-    register_scalar(conn, "st_perimeter", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_perimeter2d", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_perimeter
-    register_scalar(conn, "st_perimeter_2d", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_perimeter
-    register_scalar(conn, "st_perimeter_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_perimeter
-    register_scalar(conn, "st_perimeter_twod", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_perimeter
-    register_scalar(conn, "st_perimeterthreed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3dperimeter", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_perimeterthreed
-    register_scalar(conn, "st_perimeter_threed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_perimeterthreed
-    register_scalar(conn, "st_pixelascentroid", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_pixel_as_centroid", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pixelascentroid
-    register_scalar(conn, "st_pixelaspoint", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_pixel_as_point", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pixelaspoint
-    register_scalar(conn, "st_pixelaspolygon", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_pixel_as_polygon", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pixelaspolygon
-    register_scalar(conn, "st_pixelaspolygons", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_pixel_as_polygons", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pixelaspolygons
-    register_scalar(conn, "st_pixelofvalue", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_pixel_of_value", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pixelofvalue
-    register_scalar(conn, "st_pointfromgeohash", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_point_from_geohash", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pointfromgeohash
-    register_scalar(conn, "st_pointinsidecircle", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_point_inside_circle", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pointinsidecircle
-    register_scalar(conn, "st_pointn", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_point_n", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pointn
-    register_scalar(conn, "st_point_n_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pointn
-    register_scalar(conn, "st_pointonsurface", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_point_on_surface", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pointonsurface
-    register_scalar(conn, "st_point_on_surface_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_pointonsurface
-    register_scalar(conn, "st_polygon", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_project", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_project_batch", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_project
-    register_scalar(conn, "st_quantile", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_quantizecoordinates", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_quantize_coordinates", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_quantizecoordinates
-    register_scalar(conn, "st_rastercontains", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_contains", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rastercontains
-    register_scalar(conn, "st_rastercontainsgeom", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_contains_geom", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rastercontainsgeom
-    register_scalar(conn, "st_rasterconvexhull", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_convex_hull", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rasterconvexhull
-    register_scalar(conn, "st_rastercovers", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_covers", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rastercovers
-    register_scalar(conn, "st_rasterintersects", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_intersects", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rasterintersects
-    register_scalar(conn, "st_rasterintersectsgeom", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_intersects_geom", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rasterintersectsgeom
-    register_scalar(conn, "st_rasteroverlaps", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_overlaps", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rasteroverlaps
-    register_scalar(conn, "st_rasterpolygon", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_polygon", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rasterpolygon
-    register_scalar(conn, "st_rastpolygon", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rasterpolygon
-    register_scalar(conn, "st_rastertoworldcoordx", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_to_world_coord_x", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rastertoworldcoordx
-    register_scalar(conn, "st_rastertoworldcoordy", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_to_world_coord_y", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rastertoworldcoordy
-    register_scalar(conn, "st_rasterwithin", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_raster_within", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rasterwithin
-    register_scalar(conn, "st_rastsrid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rast_srid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rastsrid
-    register_scalar(conn, "st_reclass", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_reduceprecision", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_reduce_precision", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_reduceprecision
-    register_scalar(conn, "st_relate", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_relatematch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_relate_match", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_relatematch
+    register_scalar(
+        conn,
+        "st_node",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_normalize",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_normalizeaddress",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_normalize_address",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_normalizeaddress
+    register_scalar(
+        conn,
+        "st_npoints",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_num_points",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_npoints
+    register_scalar(
+        conn,
+        "st_num_points_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_npoints
+    register_scalar(
+        conn,
+        "st_numpoints",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_npoints
+    register_scalar(
+        conn,
+        "st_nrings",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_numbands",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_num_bands",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_numbands
+    register_scalar(
+        conn,
+        "st_rastnumbands",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_numbands
+    register_scalar(
+        conn,
+        "st_numgeometries",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_num_curves",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_numgeometries
+    register_scalar(
+        conn,
+        "st_num_geometries",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_numgeometries
+    register_scalar(
+        conn,
+        "st_num_geometries_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_numgeometries
+    register_scalar(
+        conn,
+        "st_numcurves",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_numgeometries
+    register_scalar(
+        conn,
+        "st_numinteriorrings",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_num_interior_rings",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_numinteriorrings
+    register_scalar(
+        conn,
+        "st_numinteriorring",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_numinteriorrings
+    register_scalar(
+        conn,
+        "st_offsetcurve",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_offset_curve",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_offsetcurve
+    register_scalar(
+        conn,
+        "st_orderingequals",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_ordering_equals",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_orderingequals
+    register_scalar(
+        conn,
+        "st_orientedenvelope",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_oriented_envelope",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_orientedenvelope
+    register_scalar(
+        conn,
+        "st_overlaps",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_overlaps_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_overlaps
+    register_scalar(
+        conn,
+        "st_parseaddress",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_parse_address",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_parseaddress
+    register_scalar(
+        conn,
+        "st_perimeter",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_perimeter2d",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_perimeter
+    register_scalar(
+        conn,
+        "st_perimeter_2d",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_perimeter
+    register_scalar(
+        conn,
+        "st_perimeter_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_perimeter
+    register_scalar(
+        conn,
+        "st_perimeter_twod",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_perimeter
+    register_scalar(
+        conn,
+        "st_perimeterthreed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3dperimeter",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_perimeterthreed
+    register_scalar(
+        conn,
+        "st_perimeter_threed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_perimeterthreed
+    register_scalar(
+        conn,
+        "st_pixelascentroid",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_pixel_as_centroid",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pixelascentroid
+    register_scalar(
+        conn,
+        "st_pixelaspoint",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_pixel_as_point",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pixelaspoint
+    register_scalar(
+        conn,
+        "st_pixelaspolygon",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_pixel_as_polygon",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pixelaspolygon
+    register_scalar(
+        conn,
+        "st_pixelaspolygons",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_pixel_as_polygons",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pixelaspolygons
+    register_scalar(
+        conn,
+        "st_pixelofvalue",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_pixel_of_value",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pixelofvalue
+    register_scalar(
+        conn,
+        "st_pointfromgeohash",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_point_from_geohash",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pointfromgeohash
+    register_scalar(
+        conn,
+        "st_pointinsidecircle",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_point_inside_circle",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pointinsidecircle
+    register_scalar(
+        conn,
+        "st_pointn",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_point_n",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pointn
+    register_scalar(
+        conn,
+        "st_point_n_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pointn
+    register_scalar(
+        conn,
+        "st_pointonsurface",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_point_on_surface",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pointonsurface
+    register_scalar(
+        conn,
+        "st_point_on_surface_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_pointonsurface
+    register_scalar(
+        conn,
+        "st_polygon",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_project",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_project_batch",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_project
+    register_scalar(
+        conn,
+        "st_quantile",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_quantizecoordinates",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_quantize_coordinates",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_quantizecoordinates
+    register_scalar(
+        conn,
+        "st_rastercontains",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_contains",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rastercontains
+    register_scalar(
+        conn,
+        "st_rastercontainsgeom",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_contains_geom",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rastercontainsgeom
+    register_scalar(
+        conn,
+        "st_rasterconvexhull",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_convex_hull",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rasterconvexhull
+    register_scalar(
+        conn,
+        "st_rastercovers",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_covers",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rastercovers
+    register_scalar(
+        conn,
+        "st_rasterintersects",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_intersects",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rasterintersects
+    register_scalar(
+        conn,
+        "st_rasterintersectsgeom",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_intersects_geom",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rasterintersectsgeom
+    register_scalar(
+        conn,
+        "st_rasteroverlaps",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_overlaps",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rasteroverlaps
+    register_scalar(
+        conn,
+        "st_rasterpolygon",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_polygon",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rasterpolygon
+    register_scalar(
+        conn,
+        "st_rastpolygon",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rasterpolygon
+    register_scalar(
+        conn,
+        "st_rastertoworldcoordx",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_to_world_coord_x",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rastertoworldcoordx
+    register_scalar(
+        conn,
+        "st_rastertoworldcoordy",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_to_world_coord_y",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rastertoworldcoordy
+    register_scalar(
+        conn,
+        "st_rasterwithin",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_raster_within",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rasterwithin
+    register_scalar(
+        conn,
+        "st_rastsrid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rast_srid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rastsrid
+    register_scalar(
+        conn,
+        "st_reclass",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_reduceprecision",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_reduce_precision",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_reduceprecision
+    register_scalar(
+        conn,
+        "st_relate",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_relatematch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_relate_match",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_relatematch
     register_scalar(conn, "st_removeface", 2, FunctionFlags::SQLITE_UTF8)?;
     register_scalar(conn, "st_remove_face", 2, FunctionFlags::SQLITE_UTF8)?; // alias of st_removeface
     register_scalar(conn, "topology_remove_face", 2, FunctionFlags::SQLITE_UTF8)?; // alias of st_removeface
-    register_scalar(conn, "st_removepoint", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_remove_point", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_removepoint
-    register_scalar(conn, "st_removerepeatedpoints", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_remove_repeated_points", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_removerepeatedpoints
-    register_scalar(conn, "st_removesmallparts", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_remove_small_parts", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_removesmallparts
-    register_scalar(conn, "st_rescale", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_resize", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_reverse", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_reversethreed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3dreverse", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_reversethreed
-    register_scalar(conn, "st_reverse_threed", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_reversethreed
-    register_scalar(conn, "st_rotate", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rotatethreed", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3drotate", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rotatethreed
-    register_scalar(conn, "st_rotate_threed", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rotatethreed
-    register_scalar(conn, "st_rotatex", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rotate_x", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rotatex
-    register_scalar(conn, "st_rotatey", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rotate_y", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rotatey
-    register_scalar(conn, "st_rotatez", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rotate_z", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_rotatez
-    register_scalar(conn, "st_roughness", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_scale", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_scalethreed", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3dscale", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_scalethreed
-    register_scalar(conn, "st_scale_threed", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_scalethreed
-    register_scalar(conn, "st_scalex", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rast_scale_x_dfer_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_scalex
-    register_scalar(conn, "st_scale_x", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_scalex
-    register_scalar(conn, "st_scaley", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rast_scale_y_dfer_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_scaley
-    register_scalar(conn, "st_scale_y", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_scaley
-    register_scalar(conn, "st_scroll", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_segmentize", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_seteffectivearea", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_set_effective_area", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_seteffectivearea
-    register_scalar(conn, "st_setpoint", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_set_point", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_setpoint
-    register_scalar(conn, "st_setsrid", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_set_srid", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_setsrid
-    register_scalar(conn, "st_setvalue", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_set_value", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_setvalue
-    register_scalar(conn, "st_setvalues", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_set_values", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_setvalues
-    register_scalar(conn, "st_sharedpaths", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_shared_paths", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_sharedpaths
-    register_scalar(conn, "st_shiftlongitude", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_shift_longitude", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_shiftlongitude
-    register_scalar(conn, "st_shortestline", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_shortest_line", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_shortestline
-    register_scalar(conn, "st_simplify", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_simplify_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_simplify
-    register_scalar(conn, "st_simplifypolygonhull", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_simplify_polygon_hull", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_simplifypolygonhull
-    register_scalar(conn, "st_simplifypreservetopology", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_simplify_preserve_topology", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_simplifypreservetopology
-    register_scalar(conn, "st_simplify_preserve_topology_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_simplifypreservetopology
-    register_scalar(conn, "st_simplifyvw", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_simplify_vw", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_simplifyvw
-    register_scalar(conn, "st_skewx", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rast_skew_x_dfer_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_skewx
-    register_scalar(conn, "st_skew_x", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_skewx
-    register_scalar(conn, "st_skewy", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rast_skew_y_dfer_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_skewy
-    register_scalar(conn, "st_skew_y", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_skewy
-    register_scalar(conn, "st_slope", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_snap", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_snaptogrid", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_snap_to_grid", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_snaptogrid
-    register_scalar(conn, "st_split", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_square", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_srid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rast_srid_dfer_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_srid
-    register_scalar(conn, "st_startpoint", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_start_point", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_startpoint
-    register_scalar(conn, "st_start_point_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_startpoint
-    register_scalar(conn, "st_straightskeleton", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_straight_skeleton", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_straightskeleton
-    register_scalar(conn, "st_summary", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_summarystats", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_summary_stats", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_summarystats
-    register_scalar(conn, "st_swapordinates", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_swap_ordinates", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_swapordinates
-    register_scalar(conn, "st_symdifference", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_sym_difference", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_symdifference
-    register_scalar(conn, "st_sym_difference", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_symdifference
-    register_scalar(conn, "st_sym_difference_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_symdifference
-    register_scalar(conn, "st_tesselate", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_tileenvelope", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_tile_envelope", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_tileenvelope
-    register_scalar(conn, "st_topogeomelementcount", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topo_geom_element_count", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topogeomelementcount
-    register_scalar(conn, "st_topogeomgeometry", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topo_geom_geometry", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topogeomgeometry
-    register_scalar(conn, "topogeom_geometry", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topogeomgeometry
-    register_scalar(conn, "st_topogeomgetelements", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topo_geom_get_elements", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topogeomgetelements
-    register_scalar(conn, "st_topogeomtopotype", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topo_geom_topo_type", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topogeomtopotype
-    register_scalar(conn, "st_topologyedgecount", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topology_edge_count", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyedgecount
-    register_scalar(conn, "st_topology_edge_count_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyedgecount
-    register_scalar(conn, "topology_edge_count", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyedgecount
-    register_scalar(conn, "st_topologyfacecount", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topology_face_count", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyfacecount
-    register_scalar(conn, "st_topology_face_count_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyfacecount
-    register_scalar(conn, "topology_face_count", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyfacecount
-    register_scalar(conn, "st_topologyfrombytes", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topology_from_bytes", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyfrombytes
-    register_scalar(conn, "topology_from_bytes", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyfrombytes
-    register_scalar(conn, "st_topologyname", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topology_name", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyname
-    register_scalar(conn, "st_topology_name_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyname
-    register_scalar(conn, "topology_name", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyname
-    register_scalar(conn, "st_topologynodecount", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topology_node_count", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologynodecount
-    register_scalar(conn, "st_topology_node_count_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologynodecount
-    register_scalar(conn, "topology_node_count", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologynodecount
-    register_scalar(conn, "st_topologyprecision", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topology_precision", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyprecision
-    register_scalar(conn, "st_topology_precision_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyprecision
-    register_scalar(conn, "topology_precision", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologyprecision
-    register_scalar(conn, "st_topologysrid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topology_srid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologysrid
-    register_scalar(conn, "st_topology_srid_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologysrid
-    register_scalar(conn, "topology_srid", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologysrid
-    register_scalar(conn, "st_topologytobytes", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_topology_to_bytes", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologytobytes
-    register_scalar(conn, "topology_to_bytes", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_topologytobytes
-    register_scalar(conn, "st_touches", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_touches_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_touches
-    register_scalar(conn, "st_tpi", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_transform", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_transformpipeline", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_transform_pipeline", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_transformpipeline
-    register_scalar(conn, "st_translate", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_translatethreed", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3dtranslate", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_translatethreed
-    register_scalar(conn, "st_translate_threed", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_translatethreed
-    register_scalar(conn, "st_transscale", 5, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_tri", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_triangulatepolygon", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_triangulate_polygon", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_triangulatepolygon
-    register_scalar(conn, "st_unaryunion", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_coverage_union", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_unaryunion
-    register_scalar(conn, "st_unary_union", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_unaryunion
-    register_scalar(conn, "st_union", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_geog_union", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_union
-    register_scalar(conn, "st_rast_union_aggregate", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_union
-    register_scalar(conn, "st_union_aggregate_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_union
-    register_scalar(conn, "st_union_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_union
-    register_scalar(conn, "st_unionthreed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_3dunion", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_unionthreed
-    register_scalar(conn, "st_union_threed", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_unionthreed
-    register_scalar(conn, "st_upperleftx", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rast_upper_left_x_dfer_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_upperleftx
-    register_scalar(conn, "st_upper_left_x", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_upperleftx
-    register_scalar(conn, "st_upperlefty", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rast_upper_left_y_dfer_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_upperlefty
-    register_scalar(conn, "st_upper_left_y", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_upperlefty
-    register_scalar(conn, "st_validatetopology", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_validate_topology", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_validatetopology
-    register_scalar(conn, "topology_validate", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_validatetopology
-    register_scalar(conn, "st_value", 4, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_valuecount", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_value_count", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_valuecount
-    register_scalar(conn, "st_volume", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_voronoilines", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_voronoi_lines", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_voronoilines
-    register_scalar(conn, "st_voronoipolygons", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_voronoi_polygons", -1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_voronoipolygons
-    register_scalar(conn, "st_width", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_rast_width_dfer_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_width
-    register_scalar(conn, "st_rastwidth", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_width
-    register_scalar(conn, "st_within", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_within_batch", 2, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_within
-    register_scalar(conn, "st_worldtorastercoord", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_world_to_raster_coord", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_worldtorastercoord
-    register_scalar(conn, "st_worldtorastercoordcol", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_world_to_raster_coord_col", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_worldtorastercoordcol
-    register_scalar(conn, "st_worldtorastercoordrow", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_world_to_raster_coord_row", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_worldtorastercoordrow
-    register_scalar(conn, "st_wrapx", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_wrap_x", 3, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_wrapx
-    register_scalar(conn, "st_x", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_x_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_x
-    register_scalar(conn, "st_xmax", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_xmin", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_y", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_y_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_y
-    register_scalar(conn, "st_ymax", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_ymin", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_z", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_z_batch", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_z
-    register_scalar(conn, "st_zmax", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_zmflag", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
-    register_scalar(conn, "st_zmflag", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?; // alias of st_zmflag
-    register_scalar(conn, "st_zmin", 1, FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8)?;
+    register_scalar(
+        conn,
+        "st_removepoint",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_remove_point",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_removepoint
+    register_scalar(
+        conn,
+        "st_removerepeatedpoints",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_remove_repeated_points",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_removerepeatedpoints
+    register_scalar(
+        conn,
+        "st_removesmallparts",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_remove_small_parts",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_removesmallparts
+    register_scalar(
+        conn,
+        "st_rescale",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_resize",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_reverse",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_reversethreed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3dreverse",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_reversethreed
+    register_scalar(
+        conn,
+        "st_reverse_threed",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_reversethreed
+    register_scalar(
+        conn,
+        "st_rotate",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rotatethreed",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3drotate",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rotatethreed
+    register_scalar(
+        conn,
+        "st_rotate_threed",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rotatethreed
+    register_scalar(
+        conn,
+        "st_rotatex",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rotate_x",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rotatex
+    register_scalar(
+        conn,
+        "st_rotatey",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rotate_y",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rotatey
+    register_scalar(
+        conn,
+        "st_rotatez",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rotate_z",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_rotatez
+    register_scalar(
+        conn,
+        "st_roughness",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_scale",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_scalethreed",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3dscale",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_scalethreed
+    register_scalar(
+        conn,
+        "st_scale_threed",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_scalethreed
+    register_scalar(
+        conn,
+        "st_scalex",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rast_scale_x_dfer_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_scalex
+    register_scalar(
+        conn,
+        "st_scale_x",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_scalex
+    register_scalar(
+        conn,
+        "st_scaley",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rast_scale_y_dfer_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_scaley
+    register_scalar(
+        conn,
+        "st_scale_y",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_scaley
+    register_scalar(
+        conn,
+        "st_scroll",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_segmentize",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_seteffectivearea",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_set_effective_area",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_seteffectivearea
+    register_scalar(
+        conn,
+        "st_setpoint",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_set_point",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_setpoint
+    register_scalar(
+        conn,
+        "st_setsrid",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_set_srid",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_setsrid
+    register_scalar(
+        conn,
+        "st_setvalue",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_set_value",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_setvalue
+    register_scalar(
+        conn,
+        "st_setvalues",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_set_values",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_setvalues
+    register_scalar(
+        conn,
+        "st_sharedpaths",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_shared_paths",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_sharedpaths
+    register_scalar(
+        conn,
+        "st_shiftlongitude",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_shift_longitude",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_shiftlongitude
+    register_scalar(
+        conn,
+        "st_shortestline",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_shortest_line",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_shortestline
+    register_scalar(
+        conn,
+        "st_simplify",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_simplify_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_simplify
+    register_scalar(
+        conn,
+        "st_simplifypolygonhull",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_simplify_polygon_hull",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_simplifypolygonhull
+    register_scalar(
+        conn,
+        "st_simplifypreservetopology",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_simplify_preserve_topology",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_simplifypreservetopology
+    register_scalar(
+        conn,
+        "st_simplify_preserve_topology_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_simplifypreservetopology
+    register_scalar(
+        conn,
+        "st_simplifyvw",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_simplify_vw",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_simplifyvw
+    register_scalar(
+        conn,
+        "st_skewx",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rast_skew_x_dfer_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_skewx
+    register_scalar(
+        conn,
+        "st_skew_x",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_skewx
+    register_scalar(
+        conn,
+        "st_skewy",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rast_skew_y_dfer_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_skewy
+    register_scalar(
+        conn,
+        "st_skew_y",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_skewy
+    register_scalar(
+        conn,
+        "st_slope",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_snap",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_snaptogrid",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_snap_to_grid",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_snaptogrid
+    register_scalar(
+        conn,
+        "st_split",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_square",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_srid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rast_srid_dfer_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_srid
+    register_scalar(
+        conn,
+        "st_startpoint",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_start_point",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_startpoint
+    register_scalar(
+        conn,
+        "st_start_point_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_startpoint
+    register_scalar(
+        conn,
+        "st_straightskeleton",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_straight_skeleton",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_straightskeleton
+    register_scalar(
+        conn,
+        "st_summary",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_summarystats",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_summary_stats",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_summarystats
+    register_scalar(
+        conn,
+        "st_swapordinates",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_swap_ordinates",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_swapordinates
+    register_scalar(
+        conn,
+        "st_symdifference",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_sym_difference",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_symdifference
+    register_scalar(
+        conn,
+        "st_sym_difference",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_symdifference
+    register_scalar(
+        conn,
+        "st_sym_difference_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_symdifference
+    register_scalar(
+        conn,
+        "st_tesselate",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_tileenvelope",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_tile_envelope",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_tileenvelope
+    register_scalar(
+        conn,
+        "st_topogeomelementcount",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topo_geom_element_count",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topogeomelementcount
+    register_scalar(
+        conn,
+        "st_topogeomgeometry",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topo_geom_geometry",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topogeomgeometry
+    register_scalar(
+        conn,
+        "topogeom_geometry",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topogeomgeometry
+    register_scalar(
+        conn,
+        "st_topogeomgetelements",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topo_geom_get_elements",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topogeomgetelements
+    register_scalar(
+        conn,
+        "st_topogeomtopotype",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topo_geom_topo_type",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topogeomtopotype
+    register_scalar(
+        conn,
+        "st_topologyedgecount",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topology_edge_count",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyedgecount
+    register_scalar(
+        conn,
+        "st_topology_edge_count_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyedgecount
+    register_scalar(
+        conn,
+        "topology_edge_count",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyedgecount
+    register_scalar(
+        conn,
+        "st_topologyfacecount",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topology_face_count",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyfacecount
+    register_scalar(
+        conn,
+        "st_topology_face_count_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyfacecount
+    register_scalar(
+        conn,
+        "topology_face_count",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyfacecount
+    register_scalar(
+        conn,
+        "st_topologyfrombytes",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topology_from_bytes",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyfrombytes
+    register_scalar(
+        conn,
+        "topology_from_bytes",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyfrombytes
+    register_scalar(
+        conn,
+        "st_topologyname",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topology_name",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyname
+    register_scalar(
+        conn,
+        "st_topology_name_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyname
+    register_scalar(
+        conn,
+        "topology_name",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyname
+    register_scalar(
+        conn,
+        "st_topologynodecount",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topology_node_count",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologynodecount
+    register_scalar(
+        conn,
+        "st_topology_node_count_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologynodecount
+    register_scalar(
+        conn,
+        "topology_node_count",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologynodecount
+    register_scalar(
+        conn,
+        "st_topologyprecision",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topology_precision",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyprecision
+    register_scalar(
+        conn,
+        "st_topology_precision_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyprecision
+    register_scalar(
+        conn,
+        "topology_precision",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologyprecision
+    register_scalar(
+        conn,
+        "st_topologysrid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topology_srid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologysrid
+    register_scalar(
+        conn,
+        "st_topology_srid_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologysrid
+    register_scalar(
+        conn,
+        "topology_srid",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologysrid
+    register_scalar(
+        conn,
+        "st_topologytobytes",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_topology_to_bytes",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologytobytes
+    register_scalar(
+        conn,
+        "topology_to_bytes",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_topologytobytes
+    register_scalar(
+        conn,
+        "st_touches",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_touches_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_touches
+    register_scalar(
+        conn,
+        "st_tpi",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_transform",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_transformpipeline",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_transform_pipeline",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_transformpipeline
+    register_scalar(
+        conn,
+        "st_translate",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_translatethreed",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3dtranslate",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_translatethreed
+    register_scalar(
+        conn,
+        "st_translate_threed",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_translatethreed
+    register_scalar(
+        conn,
+        "st_transscale",
+        5,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_tri",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_triangulatepolygon",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_triangulate_polygon",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_triangulatepolygon
+    register_scalar(
+        conn,
+        "st_unaryunion",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_coverage_union",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_unaryunion
+    register_scalar(
+        conn,
+        "st_unary_union",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_unaryunion
+    register_scalar(
+        conn,
+        "st_union",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_geog_union",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_union
+    register_scalar(
+        conn,
+        "st_rast_union_aggregate",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_union
+    register_scalar(
+        conn,
+        "st_union_aggregate_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_union
+    register_scalar(
+        conn,
+        "st_union_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_union
+    register_scalar(
+        conn,
+        "st_unionthreed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_3dunion",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_unionthreed
+    register_scalar(
+        conn,
+        "st_union_threed",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_unionthreed
+    register_scalar(
+        conn,
+        "st_upperleftx",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rast_upper_left_x_dfer_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_upperleftx
+    register_scalar(
+        conn,
+        "st_upper_left_x",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_upperleftx
+    register_scalar(
+        conn,
+        "st_upperlefty",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rast_upper_left_y_dfer_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_upperlefty
+    register_scalar(
+        conn,
+        "st_upper_left_y",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_upperlefty
+    register_scalar(
+        conn,
+        "st_validatetopology",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_validate_topology",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_validatetopology
+    register_scalar(
+        conn,
+        "topology_validate",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_validatetopology
+    register_scalar(
+        conn,
+        "st_value",
+        4,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_valuecount",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_value_count",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_valuecount
+    register_scalar(
+        conn,
+        "st_volume",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_voronoilines",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_voronoi_lines",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_voronoilines
+    register_scalar(
+        conn,
+        "st_voronoipolygons",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_voronoi_polygons",
+        -1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_voronoipolygons
+    register_scalar(
+        conn,
+        "st_width",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_rast_width_dfer_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_width
+    register_scalar(
+        conn,
+        "st_rastwidth",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_width
+    register_scalar(
+        conn,
+        "st_within",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_within_batch",
+        2,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_within
+    register_scalar(
+        conn,
+        "st_worldtorastercoord",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_world_to_raster_coord",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_worldtorastercoord
+    register_scalar(
+        conn,
+        "st_worldtorastercoordcol",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_world_to_raster_coord_col",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_worldtorastercoordcol
+    register_scalar(
+        conn,
+        "st_worldtorastercoordrow",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_world_to_raster_coord_row",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_worldtorastercoordrow
+    register_scalar(
+        conn,
+        "st_wrapx",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_wrap_x",
+        3,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_wrapx
+    register_scalar(
+        conn,
+        "st_x",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_x_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_x
+    register_scalar(
+        conn,
+        "st_xmax",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_xmin",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_y",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_y_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_y
+    register_scalar(
+        conn,
+        "st_ymax",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_ymin",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_z",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_z_batch",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_z
+    register_scalar(
+        conn,
+        "st_zmax",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_zmflag",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
+    register_scalar(
+        conn,
+        "st_zmflag",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?; // alias of st_zmflag
+    register_scalar(
+        conn,
+        "st_zmin",
+        1,
+        FunctionFlags::SQLITE_DETERMINISTIC | FunctionFlags::SQLITE_UTF8,
+    )?;
     // Phase 2: 402 canonical + 529 alias names registered.
     Ok(())
 }
@@ -984,14 +5489,18 @@ fn register_scalar(
 ) -> Result<()> {
     // Resolve once at registration time. If the shim doesn't
     // know this name, fail fast rather than at first call.
-    let def: Arc<dyn ScalarFunctionDef> = registry::lookup_scalar(sql_name)
-        .ok_or_else(|| rusqlite::Error::UserFunctionError(
-            format!("scalar `{sql_name}` not registered by the shim").into()
-        ))?;
+    let def: Arc<dyn ScalarFunctionDef> = registry::lookup_scalar(sql_name).ok_or_else(|| {
+        rusqlite::Error::UserFunctionError(
+            format!("scalar `{sql_name}` not registered by the shim").into(),
+        )
+    })?;
 
-    conn.create_scalar_function(sql_name, arity, flags, move |ctx| -> Result<ToSqlOutput<'static>> {
-        dispatch_scalar(&def, ctx)
-    })
+    conn.create_scalar_function(
+        sql_name,
+        arity,
+        flags,
+        move |ctx| -> Result<ToSqlOutput<'static>> { dispatch_scalar(&def, ctx) },
+    )
 }
 
 /// Per-call dispatcher: marshal sqlite args → FunctionValue,
@@ -1035,9 +5544,7 @@ pub(crate) fn value_ref_to_function_value(v: ValueRef<'_>) -> FunctionValue {
         ValueRef::Null => FunctionValue::Null,
         ValueRef::Integer(i) => FunctionValue::Int64(i),
         ValueRef::Real(f) => FunctionValue::Float64(f),
-        ValueRef::Text(b) => FunctionValue::String(
-            String::from_utf8_lossy(b).into_owned()
-        ),
+        ValueRef::Text(b) => FunctionValue::String(String::from_utf8_lossy(b).into_owned()),
         ValueRef::Blob(b) => FunctionValue::Binary(b.to_vec()),
     }
 }
@@ -1064,9 +5571,8 @@ pub(crate) fn function_value_to_tosql(v: FunctionValue) -> ToSqlOutput<'static> 
         // representation. Serialize as JSON text for now —
         // callers can ROUND_TRIP through json_extract.
         other => Value::Text(
-            serde_json::to_string(&other).unwrap_or_else(|_| "<unrepresentable>".into())
+            serde_json::to_string(&other).unwrap_or_else(|_| "<unrepresentable>".into()),
         ),
     };
     ToSqlOutput::Owned(value)
 }
-

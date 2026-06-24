@@ -12,17 +12,17 @@
 //! indexes) are scaffold-only — see per-module TODOs and
 //! AGENTS.md for the phased plan.
 
+pub mod aggregates;
+pub mod casts;
+pub mod operators;
+pub mod preprocessors;
 pub mod registry;
 pub mod scalars;
-pub mod aggregates;
-pub mod table_functions;
-pub mod window_functions;
-pub mod types;
-pub mod operators;
-pub mod casts;
-pub mod preprocessors;
-pub mod system_catalog;
 pub mod spatial_indexes;
+pub mod system_catalog;
+pub mod table_functions;
+pub mod types;
+pub mod window_functions;
 
 use std::os::raw::{c_char, c_int};
 
@@ -55,24 +55,19 @@ fn init_inner(conn: Connection) -> Result<bool> {
         // `{e:#}` walks the anyhow chain so the user sees the
         // underlying cause (wasm parse error, missing import,
         // etc.) rather than just the top-level wrapper.
-        rusqlite::Error::UserFunctionError(
-            format!("shim load: {e:#}").into()
-        )
+        rusqlite::Error::UserFunctionError(format!("shim load: {e:#}").into())
     })?;
 
     // Register scalars (Phase 2) + aggregates (Phase 3c).
-    scalars::register_all(&conn)
-        .map_err(|e| rusqlite::Error::UserFunctionError(
-            format!("scalar registration: {e}").into()
-        ))?;
-    aggregates::register_all(&conn)
-        .map_err(|e| rusqlite::Error::UserFunctionError(
-            format!("aggregate registration: {e}").into()
-        ))?;
-    table_functions::register_all(&conn)
-        .map_err(|e| rusqlite::Error::UserFunctionError(
-            format!("table function registration: {e}").into()
-        ))?;
+    scalars::register_all(&conn).map_err(|e| {
+        rusqlite::Error::UserFunctionError(format!("scalar registration: {e}").into())
+    })?;
+    aggregates::register_all(&conn).map_err(|e| {
+        rusqlite::Error::UserFunctionError(format!("aggregate registration: {e}").into())
+    })?;
+    table_functions::register_all(&conn).map_err(|e| {
+        rusqlite::Error::UserFunctionError(format!("table function registration: {e}").into())
+    })?;
 
     // Returning `true` means "extension fully initialized — no
     // need to keep it loaded across DB sessions". `false` would

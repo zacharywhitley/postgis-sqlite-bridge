@@ -24,7 +24,7 @@ use datafission_functions::traits::{
 static SHIM: OnceCell<ShimRegistry> = OnceCell::new();
 
 struct ShimRegistry {
-    _ext: RuntimeWasmExtension,  // keep the wasm Store alive
+    _ext: RuntimeWasmExtension, // keep the wasm Store alive
     scalars: RwLock<HashMap<String, Arc<dyn ScalarFunctionDef>>>,
     aggregates: RwLock<HashMap<String, Arc<dyn AggregateFunctionDef>>>,
     table_functions: RwLock<HashMap<String, Arc<dyn TableFunctionDef>>>,
@@ -34,12 +34,11 @@ pub fn load_shim() -> Result<()> {
     if SHIM.get().is_some() {
         return Ok(());
     }
-    let path = std::env::var("POSTGIS_SHIM_WASM")
-        .with_context(|| format!(
-            "Set POSTGIS_SHIM_WASM=/path/to/composed-shim.wasm before .load"
-        ))?;
-    let ext = RuntimeWasmExtension::from_file(&path)
-        .with_context(|| format!("loading shim {path}"))?;
+    let path = std::env::var("POSTGIS_SHIM_WASM").with_context(|| {
+        format!("Set POSTGIS_SHIM_WASM=/path/to/composed-shim.wasm before .load")
+    })?;
+    let ext =
+        RuntimeWasmExtension::from_file(&path).with_context(|| format!("loading shim {path}"))?;
 
     let mut capture = CapturingTarget {
         scalars: Vec::new(),
@@ -79,7 +78,8 @@ pub fn load_shim() -> Result<()> {
         scalars: RwLock::new(scalars),
         aggregates: RwLock::new(aggregates),
         table_functions: RwLock::new(table_functions),
-    }).map_err(|_| anyhow::anyhow!("ShimRegistry already initialised"))?;
+    })
+    .map_err(|_| anyhow::anyhow!("ShimRegistry already initialised"))?;
 
     Ok(())
 }
@@ -100,7 +100,10 @@ pub fn lookup_table_function(name: &str) -> Option<Arc<dyn TableFunctionDef>> {
 }
 
 pub fn all_table_function_names() -> Vec<String> {
-    let r = match SHIM.get() { Some(r) => r, None => return vec![] };
+    let r = match SHIM.get() {
+        Some(r) => r,
+        None => return vec![],
+    };
     r.table_functions.read().keys().cloned().collect()
 }
 

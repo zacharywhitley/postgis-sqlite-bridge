@@ -6,5 +6,4 @@
 //! schema is in the comments below; the dispatch pulls rows
 //! from the shim's catalog provider.
 
-
 // TODO: emit sqlite3_create_module_v2 calls for each.

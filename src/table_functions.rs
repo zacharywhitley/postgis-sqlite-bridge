@@ -28,8 +28,8 @@ use std::sync::Arc;
 use rusqlite::ffi;
 use rusqlite::types::ToSql;
 use rusqlite::vtab::{
-    eponymous_only_module, Context, IndexConstraintOp, IndexInfo, VTab,
-    VTabConfig, VTabConnection, VTabCursor, Values,
+    eponymous_only_module, Context, IndexConstraintOp, IndexInfo, VTab, VTabConfig, VTabConnection,
+    VTabCursor, Values,
 };
 use rusqlite::{Connection, Result};
 
@@ -60,7 +60,7 @@ pub fn register_all(conn: &Connection) -> Result<()> {
 fn register_udtf(conn: &Connection, sql_name: &str) -> Result<()> {
     let def = registry::lookup_table_function(sql_name).ok_or_else(|| {
         rusqlite::Error::UserFunctionError(
-            format!("udtf `{sql_name}` not registered by the shim").into()
+            format!("udtf `{sql_name}` not registered by the shim").into(),
         )
     })?;
     conn.create_module(sql_name, eponymous_only_module::<ShimVTab>(), Some(def))
@@ -89,9 +89,9 @@ unsafe impl<'vtab> VTab<'vtab> for ShimVTab {
         aux: Option<&Self::Aux>,
         _args: &[&[u8]],
     ) -> Result<(String, ShimVTab)> {
-        let def = aux.cloned().ok_or_else(|| rusqlite::Error::UserFunctionError(
-            "ShimVTab::connect: aux missing".into()
-        ))?;
+        let def = aux.cloned().ok_or_else(|| {
+            rusqlite::Error::UserFunctionError("ShimVTab::connect: aux missing".into())
+        })?;
 
         // Output schema: ask the def what columns it will emit
         // given its first param signature's types. Most shim UDTFs
@@ -105,7 +105,9 @@ unsafe impl<'vtab> VTab<'vtab> for ShimVTab {
 
         let mut schema = String::from("CREATE TABLE x(");
         for (i, col) in output_cols.iter().enumerate() {
-            if i > 0 { schema.push_str(", "); }
+            if i > 0 {
+                schema.push_str(", ");
+            }
             // Quote the column name and assign a SQLite affinity
             // based on the shim's DataType.
             schema.push_str(&format!(
@@ -115,7 +117,9 @@ unsafe impl<'vtab> VTab<'vtab> for ShimVTab {
             ));
         }
         for i in 0..n_input {
-            if !output_cols.is_empty() || i > 0 { schema.push_str(", "); }
+            if !output_cols.is_empty() || i > 0 {
+                schema.push_str(", ");
+            }
             schema.push_str(&format!("\"arg{i}\" BLOB HIDDEN"));
         }
         schema.push(')');
@@ -124,12 +128,15 @@ unsafe impl<'vtab> VTab<'vtab> for ShimVTab {
         // views without elevated permission.
         db.config(VTabConfig::Innocuous)?;
 
-        Ok((schema, ShimVTab {
-            base: ffi::sqlite3_vtab::default(),
-            def,
-            n_output,
-            n_input,
-        }))
+        Ok((
+            schema,
+            ShimVTab {
+                base: ffi::sqlite3_vtab::default(),
+                def,
+                n_output,
+                n_input,
+            },
+        ))
     }
 
     fn best_index(&self, info: &mut IndexInfo) -> Result<()> {
@@ -140,13 +147,20 @@ unsafe impl<'vtab> VTab<'vtab> for ShimVTab {
         //
         // Two-pass to avoid the borrow conflict on info: collect
         // matching constraint indices first, then mutate usage.
-        let usable_arg_constraints: Vec<usize> = info.constraints()
+        let usable_arg_constraints: Vec<usize> = info
+            .constraints()
             .enumerate()
             .filter_map(|(i, c)| {
-                if !c.is_usable() { return None; }
+                if !c.is_usable() {
+                    return None;
+                }
                 let col = c.column() as usize;
-                if col < self.n_output { return None; }
-                if c.operator() != IndexConstraintOp::SQLITE_INDEX_CONSTRAINT_EQ { return None; }
+                if col < self.n_output {
+                    return None;
+                }
+                if c.operator() != IndexConstraintOp::SQLITE_INDEX_CONSTRAINT_EQ {
+                    return None;
+                }
                 Some(i)
             })
             .collect();
@@ -168,7 +182,7 @@ unsafe impl<'vtab> VTab<'vtab> for ShimVTab {
             iter: None,
             current: None,
             rowid: 0,
-            done: true,  // true until filter() loads an iter
+            done: true, // true until filter() loads an iter
         })
     }
 }
@@ -191,7 +205,10 @@ impl ShimVTabCursor {
     fn advance(&mut self) -> Result<()> {
         let iter = match &mut self.iter {
             Some(i) => i,
-            None => { self.done = true; return Ok(()); }
+            None => {
+                self.done = true;
+                return Ok(());
+            }
         };
         match iter.next_row() {
             Some(Ok(row)) => {
@@ -201,7 +218,7 @@ impl ShimVTabCursor {
             }
             Some(Err(e)) => {
                 return Err(rusqlite::Error::UserFunctionError(Box::new(
-                    std::io::Error::other(format!("{e:?}"))
+                    std::io::Error::other(format!("{e:?}")),
                 )));
             }
             None => {
@@ -230,9 +247,7 @@ unsafe impl VTabCursor for ShimVTabCursor {
         }
 
         let iter = self.def.execute(&fv_args).map_err(|e| {
-            rusqlite::Error::UserFunctionError(Box::new(
-                std::io::Error::other(format!("{e:?}"))
-            ))
+            rusqlite::Error::UserFunctionError(Box::new(std::io::Error::other(format!("{e:?}"))))
         })?;
         self.iter = Some(iter);
         self.current = None;
@@ -253,7 +268,7 @@ unsafe impl VTabCursor for ShimVTabCursor {
         let i = i as usize;
         let row = self.current.as_ref().ok_or_else(|| {
             rusqlite::Error::UserFunctionError(
-                "ShimVTabCursor::column called with no current row".into()
+                "ShimVTabCursor::column called with no current row".into(),
             )
         })?;
         let value = row.values.get(i).cloned().unwrap_or(FunctionValue::Null);
@@ -274,12 +289,18 @@ unsafe impl VTabCursor for ShimVTabCursor {
 fn datatype_to_affinity(dt: &datafission_types::DataType) -> &'static str {
     use datafission_types::DataType as D;
     match dt {
-        D::Boolean | D::Int8 | D::Int16 | D::Int32 | D::Int64
-        | D::UInt8 | D::UInt16 | D::UInt32 | D::UInt64
-            => "INTEGER",
+        D::Boolean
+        | D::Int8
+        | D::Int16
+        | D::Int32
+        | D::Int64
+        | D::UInt8
+        | D::UInt16
+        | D::UInt32
+        | D::UInt64 => "INTEGER",
         D::Float32 | D::Float64 => "REAL",
         D::Text | D::Char { .. } | D::Varchar { .. } => "TEXT",
         D::Binary => "BLOB",
-        _ => "BLOB",  // arrays / structs / extensions all blob-shaped
+        _ => "BLOB", // arrays / structs / extensions all blob-shaped
     }
 }

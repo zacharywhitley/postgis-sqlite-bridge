@@ -64,9 +64,7 @@ impl Aggregate<AccState, ToSqlOutput<'static>> for ShimAggregate {
         // skip; pass NULL through and let the shim decide.
         let value = value_ref_to_function_value(v);
         acc.0.accumulate(&value).map_err(|e| {
-            rusqlite::Error::UserFunctionError(Box::new(
-                std::io::Error::other(format!("{e:?}"))
-            ))
+            rusqlite::Error::UserFunctionError(Box::new(std::io::Error::other(format!("{e:?}"))))
         })
     }
 
@@ -78,9 +76,9 @@ impl Aggregate<AccState, ToSqlOutput<'static>> for ShimAggregate {
         match acc {
             Some(a) => {
                 let result = a.0.finalize().map_err(|e| {
-                    rusqlite::Error::UserFunctionError(Box::new(
-                        std::io::Error::other(format!("{e:?}"))
-                    ))
+                    rusqlite::Error::UserFunctionError(Box::new(std::io::Error::other(format!(
+                        "{e:?}"
+                    ))))
                 })?;
                 Ok(function_value_to_tosql(result))
             }
@@ -132,14 +130,14 @@ pub fn register_all(conn: &Connection) -> Result<()> {
     register_aggregate(conn, "st_union_aggregate", 1)?; // alias of st_union
     register_aggregate(conn, "st_unionagg", 1)?; // alias of st_union
     register_aggregate(conn, "st_unionaggregate", 1)?; // alias of st_union
-    // Phase 3c: 11 canonical + 23 alias names registered.
+                                                       // Phase 3c: 11 canonical + 23 alias names registered.
     Ok(())
 }
 
 fn register_aggregate(conn: &Connection, sql_name: &str, arity: i32) -> Result<()> {
     let def = registry::lookup_aggregate(sql_name).ok_or_else(|| {
         rusqlite::Error::UserFunctionError(
-            format!("aggregate `{sql_name}` not registered by the shim").into()
+            format!("aggregate `{sql_name}` not registered by the shim").into(),
         )
     })?;
     conn.create_aggregate_function(
